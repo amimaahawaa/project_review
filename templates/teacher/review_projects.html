@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Pending Project Reviews</h2>
+
+    {% if pending_subs %}
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Group</th>
+                    <th>Uploaded By</th>
+                    <th>Submitted At</th>
+                    <th>File</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in pending_subs %}
+                    <tr>
+                        <td>{{ sub.group.name }}</td>
+                        <td>{{ sub.uploaded_by.username }}</td>
+                        <td>{{ sub.submitted_at|date:"d M Y, H:i" }}</td>
+                        <td>
+                            {% if sub.file %}
+                                <a href="{{ sub.file.url }}" target="_blank">Download</a>
+                            {% else %}
+                                No file
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'review_submission' sub.id %}" class="btn btn-primary btn-sm">
+                                Review
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No pending submissions at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

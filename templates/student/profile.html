@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --ivory: #FFFFF5;
+        --linen: #F5F0E6;
+        --peach: #F8D8B8;
+        --taupe: #A89B8C;
+        --mocha: #7A6B5E;
+        --umber: #5A4D42;
+        --slate: #6C7A89;
+        --charcoal: #2A2E35;
+    }
+
+    .profile-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--peach) 0%, var(--taupe) 100%);
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+        font-weight: 700;
+    }
+
+    .profile-title {
+        color: var(--umber);
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-role {
+        color: var(--mocha);
+        font-size: 1.1rem;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--linen);
+    }
+
+    .card-title {
+        color: var(--umber);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--peach);
+    }
+
+    .info-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--linen);
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: var(--mocha);
+        font-weight: 600;
+    }
+
+    .info-value {
+        color: var(--charcoal);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: var(--linen);
+        border-radius: 8px;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--taupe);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        color: var(--mocha);
+        font-size: 0.9rem;
+    }
+
+    .btn-edit {
+        background: var(--taupe);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .btn-edit:hover {
+        background: var(--mocha);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {{ user.username|first|upper }}
+        </div>
+        <h1 class="profile-title">{{ user.get_full_name|default:user.username }}</h1>
+        <p class="profile-role">{{ user.get_role_display }} • {{ user.email }}</p>
+    </div>
+
+    <div class="profile-grid">
+        <!-- Personal Information -->
+        <div class="profile-card">
+            <h3 class="card-title">Personal Information</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Username</span>
+                    <span class="info-value">{{ user.username }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ user.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Full Name</span>
+                    <span class="info-value">{{ user.get_full_name|default:"Not set" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Role</span>
+                    <span class="info-value">{{ user.get_role_display }}</span>
+                </div>
+                {% if user.roll_no %}
+                <div class="info-item">
+                    <span class="info-label">Roll No</span>
+                    <span class="info-value">{{ user.roll_no }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Academic Information -->
+        <div class="profile-card">
+            <h3 class="card-title">Academic Information</h3>
+            <div class="info-grid">
+                {% if user.semester %}
+                <div class="info-item">
+                    <span class="info-label">Semester</span>
+                    <span class="info-value">{{ user.get_semester_display }}</span>
+                </div>
+                {% endif %}
+                {% if user.division %}
+                <div class="info-item">
+                    <span class="info-label">Division</span>
+                    <span class="info-value">{{ user.get_division_display }}</span>
+                </div>
+                {% endif %}
+                {% if user.department %}
+                <div class="info-item">
+                    <span class="info-label">Department</span>
+                    <span class="info-value">{{ user.department }}</span>
+                </div>
+                {% endif %}
+                {% if user.subject %}
+                <div class="info-item">
+                    <span class="info-label">Subject</span>
+                    <span class="info-value">{{ user.subject }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="profile-card">
+            <h3 class="card-title">Activity Statistics</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">{{ groups_count|default:0 }}</div>
+                    <div class="stat-label">Groups</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ submissions_count|default:0 }}</div>
+                    <div class="stat-label">Submissions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ approved_count|default:0 }}</div>
+                    <div class="stat-label">Approved</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ pending_count|default:0 }}</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Information -->
+        <div class="profile-card">
+            <h3 class="card-title">Account Information</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Member Since</span>
+                    <span class="info-value">{{ user.date_joined|date:"M d, Y" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Last Login</span>
+                    <span class="info-value">{{ user.last_login|date:"M d, Y H:i"|default:"Never" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status</span>
+                    <span class="info-value">Active</span>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

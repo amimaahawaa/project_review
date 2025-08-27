@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --deep-teal: #0a4d68;
+        --teal: #088395;
+        --light-teal: #05bfdb;
+        --aqua: #00ffca;
+        --card-bg: #f8fafc;
+        --text-dark: #1e293b;
+        --text-light: #64748b;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Main Container */
+    .topics-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    /* Header Section */
+    .topics-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(8, 131, 149, 0.1);
+    }
+
+    .topics-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--deep-teal);
+        position: relative;
+        display: inline-block;
+    }
+
+    .topics-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 50px;
+        height: 4px;
+        background: var(--light-teal);
+        border-radius: 2px;
+    }
+
+    /* Create Button */
+    .btn-create {
+        background: var(--teal);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-create:hover {
+        background: var(--light-teal);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    /* Topics Grid */
+    .topics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* Topic Card */
+    .topic-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        border: 1px solid rgba(8, 131, 149, 0.1);
+        position: relative;
+    }
+
+    .topic-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-color: rgba(5, 191, 219, 0.3);
+    }
+
+    .topic-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--light-teal);
+        transition: var(--transition);
+    }
+
+    .topic-card:hover::before {
+        width: 6px;
+        background: var(--aqua);
+    }
+
+    .topic-card-content {
+        padding: 1.5rem;
+    }
+
+    .topic-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--deep-teal);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .topic-description {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .topic-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px dashed rgba(8, 131, 149, 0.2);
+    }
+
+    .topic-date {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    /* Action Buttons */
+    .topic-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        color: white;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px) scale(1.1);
+    }
+
+    .btn-edit {
+        background: var(--teal);
+    }
+
+    .btn-delete {
+        background: #ef4444;
+    }
+
+    .btn-view {
+        background: var(--light-teal);
+    }
+
+    /* Empty State */
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 2px dashed rgba(8, 131, 149, 0.2);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--light-teal);
+        margin-bottom: 1rem;
+    }
+
+    .empty-text {
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+    }
+
+    /* Floating Action Button (Mobile) */
+    .fab {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--teal);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(8, 131, 149, 0.3);
+        z-index: 100;
+        transition: var(--transition);
+        border: none;
+    }
+
+    .fab:hover {
+        background: var(--light-teal);
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 15px 30px rgba(5, 191, 219, 0.4);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .topics-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .topics-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .topic-card {
+            max-width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="topics-container">
+    <div class="topics-header">
+        <h1 class="topics-title">
+            <i class="bi bi-journal-bookmark"></i> My Topics
+        </h1>
+        <a href="{% url 'create_topic' %}" class="btn-create d-none d-md-inline-flex">
+            <i class="bi bi-plus-lg"></i> New Topic
+        </a>
+    </div>
+
+    <div class="topics-grid">
+        {% if topics %}
+            {% for topic in topics %}
+            <div class="topic-card">
+                <div class="topic-card-content">
+                    <h3 class="topic-title">
+                        <i class="bi bi-journal-text"></i> {{ topic.title }}
+                    </h3>
+                    <p class="topic-description">
+                        {{ topic.description|default:"No description provided" }}
+                    </p>
+                    <div class="topic-meta">
+                        <span class="topic-date">
+                            <i class="bi bi-calendar"></i> {{ topic.created_at|date:"M d, Y" }}
+                        </span>
+                        <div class="topic-actions">
+                            <a href="{% url 'edit_topic' topic.pk %}" class="action-btn btn-edit" 
+                               data-bs-toggle="tooltip" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'delete_topic' topic.pk %}" class="action-btn btn-delete" 
+                               data-bs-toggle="tooltip" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                            <a href="{% url 'topic_detail' topic.id %}" class="btn btn-info btn-sm"
+                               data-bs-toggle="tooltip" title="View">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-journal-x"></i>
+                </div>
+                <h3>No Topics Found</h3>
+                <p class="empty-text">Create your first topic to get started</p>
+                <a href="{% url 'create_topic' %}" class="btn-create">
+                    <i class="bi bi-plus-lg"></i> New Topic
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Floating Action Button for Mobile -->
+<a href="{% url 'create_topic' %}" class="fab d-md-none">
+    <i class="bi bi-plus-lg"></i>
+</a>
+
+<script>
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl, {
+                trigger: 'hover focus'
+            })
+        })
+    })
+</script>
+{% endblock %}

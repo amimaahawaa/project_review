@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+{% block title %}My Group{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Premium Nude Color Palette */
+  :root {
+    --ivory: #FFFFF8;
+    --linen: #FAF5EC;
+    --cashmere: #E8DBC5;
+    --taupe: #B8A99A;
+    --mocha: #8B7D6B;
+    --umber: #5E5347;
+    --slate: #7D8B99;
+    --charcoal: #3A4149;
+  }
+
+  .group-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+
+  .group-header::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, var(--taupe), transparent);
+  }
+
+  .group-title {
+    color: var(--umber);
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin: 0;
+  }
+
+  .group-status-badge {
+    background: linear-gradient(135deg, var(--taupe), var(--mocha));
+    color: white;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(139, 125, 107, 0.2);
+  }
+
+  .group-card {
+    background-color: var(--linen);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    border-left: 5px solid var(--taupe);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .group-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+    opacity: 0.1;
+    z-index: 0;
+  }
+
+  .group-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .info-item {
+    margin-bottom: 1rem;
+  }
+
+  .info-label {
+    font-weight: 600;
+    color: var(--mocha);
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+  }
+
+  .info-value {
+    color: var(--charcoal);
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .members-section {
+    margin: 2.5rem 0;
+  }
+
+  .members-title {
+    color: var(--umber);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--cashmere);
+  }
+
+  .members-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .member-card {
+    background-color: var(--ivory);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid var(--cashmere);
+    display: flex;
+    align-items: center;
+  }
+
+  .member-icon {
+    background-color: var(--taupe);
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+  }
+
+  .member-details {
+    flex: 1;
+  }
+
+  .member-name {
+    font-weight: 500;
+    color: var(--charcoal);
+    margin-bottom: 0.2rem;
+  }
+
+  .member-roll {
+    color: var(--slate);
+    font-size: 0.9rem;
+  }
+
+  .project-submission {
+    background-color: var(--ivory);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    border-top: 3px solid var(--taupe);
+  }
+
+  .submission-title {
+    color: var(--umber);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--cashmere);
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--mocha);
+    font-weight: 500;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--cashmere);
+    border-radius: 6px;
+    background-color: var(--linen);
+    transition: all 0.3s;
+  }
+
+  .form-control:focus {
+    border-color: var(--taupe);
+    box-shadow: 0 0 0 3px rgba(184, 169, 154, 0.15);
+    outline: none;
+  }
+
+  .form-help {
+    color: var(--slate);
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    display: block;
+  }
+
+  .form-error {
+    color: #C17C74;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+
+  .submit-button {
+    background: linear-gradient(135deg, var(--taupe), var(--mocha));
+    color: white;
+    border: none;
+    padding: 0.9rem 2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-block;
+    margin-top: 1rem;
+  }
+
+  .submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 125, 107, 0.2);
+  }
+
+  .no-group-alert {
+    background-color: var(--linen);
+    border-left: 4px solid var(--taupe);
+    padding: 2rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  .alert-icon {
+    background-color: var(--taupe);
+    color: var(--ivory);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+    font-size: 1.2rem;
+  }
+
+  .alert-content h4 {
+    color: var(--umber);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .alert-content p {
+    color: var(--slate);
+    margin: 0 0 1rem 0;
+  }
+
+  .action-link {
+    color: var(--taupe);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s;
+  }
+
+  .action-link:hover {
+    color: var(--mocha);
+    text-decoration: underline;
+  }
+
+  .action-link i {
+    margin-right: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .group-container {
+      padding: 0 1rem;
+    }
+    
+    .group-info {
+      grid-template-columns: 1fr;
+    }
+    
+    .no-group-alert {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="groups-container">
+    <h2>My Groups & Topics</h2>
+    {% if groups_data %}
+        <ul class="group-list">
+            {% for g in groups_data %}
+                <li class="group-card">
+                    <h3>Group: {{ g.group.name }}</h3>
+                    <p><strong>Topic:</strong> {{ g.topic.title }}</p>
+                    <p><strong>Assigned By:</strong> {{ g.teacher.username }}</p>
+                    <p><strong>Members:</strong></p>
+                    <ul>
+                        {% for m in g.members %}
+                            <li>{{ m.student.username }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You are not assigned to any groups yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

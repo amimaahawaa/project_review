@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --ivory: #FFFFF5;
+        --linen: #F5F0E6;
+        --peach: #F8D8B8;
+        --taupe: #A89B8C;
+        --mocha: #7A6B5E;
+        --umber: #5A4D42;
+        --slate: #6C7A89;
+        --charcoal: #2A2E35;
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    body {
+        background-color: var(--ivory);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .topic-form-container {
+        max-width: 700px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .topic-form-card {
+        background-color: var(--linen);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border-top: 5px solid var(--peach);
+        overflow: hidden;
+        transition: var(--transition);
+    }
+
+    .topic-form-card:hover {
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    }
+
+    .form-header {
+        background-color: var(--taupe);
+        color: white;
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-header h2 {
+        margin: 0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .form-body {
+        padding: 2rem;
+    }
+
+    /* Form Styling */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        color: var(--umber);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+        background-color: var(--ivory);
+        border: 1px solid var(--taupe);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        transition: var(--transition);
+        color: var(--charcoal);
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+        border-color: var(--mocha);
+        box-shadow: 0 0 0 3px rgba(168, 155, 140, 0.2);
+        outline: none;
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    /* Button Styling */
+    .btn-submit {
+        background-color: var(--taupe);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-submit:hover {
+        background-color: var(--mocha);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-cancel {
+        background-color: var(--linen);
+        color: var(--mocha);
+        border: 1px solid var(--taupe);
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 1rem;
+    }
+
+    .btn-cancel:hover {
+        background-color: var(--ivory);
+        color: var(--umber);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Form Error Styling */
+    .errorlist {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        padding-left: 0;
+        list-style: none;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .topic-form-container {
+            padding: 0;
+        }
+        
+        .form-body {
+            padding: 1.5rem;
+        }
+        
+        .btn-cancel {
+            margin-left: 0;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        
+        .btn-submit {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="topic-form-container">
+    <div class="topic-form-card">
+        <div class="form-header">
+            <h2>
+                <i class="bi bi-journal-bookmark"></i> 
+                {% if form.instance.pk %}Edit Topic{% else %}Create New Topic{% endif %}
+            </h2>
+        </div>
+        <div class="form-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_title">Title</label>
+                    {{ form.title }}
+                    {{ form.title.errors }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_description">Description</label>
+                    {{ form.description }}
+                    {{ form.description.errors }}
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-save"></i> {% if form.instance.pk %}Update{% else %}Create{% endif %} Topic
+                    </button>
+                    <a href="{% url 'topics_list' %}" class="btn-cancel">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

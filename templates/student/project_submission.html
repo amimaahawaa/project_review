@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --ivory: #FFFFF5;
+        --linen: #F5F0E6;
+        --peach: #F8D8B8;
+        --taupe: #A89B8C;
+        --mocha: #7A6B5E;
+        --umber: #5A4D42;
+        --slate: #6C7A89;
+        --charcoal: #2A2E35;
+    }
+
+    .submission-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        color: var(--umber);
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: var(--mocha);
+        font-size: 1.1rem;
+    }
+
+    .submission-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--linen);
+    }
+
+    .group-info {
+        background: var(--ivory);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border: 1px solid var(--linen);
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--linen);
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .info-label {
+        color: var(--mocha);
+        font-weight: 600;
+    }
+
+    .info-value {
+        color: var(--charcoal);
+    }
+
+    .submission-form {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        color: var(--mocha);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        padding: 0.75rem;
+        border: 1px solid var(--taupe);
+        border-radius: 8px;
+        background: var(--ivory);
+        color: var(--charcoal);
+        transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--mocha);
+        box-shadow: 0 0 0 3px rgba(168, 155, 140, 0.1);
+    }
+
+    .form-help {
+        color: var(--slate);
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+    }
+
+    .form-error {
+        color: #dc3545;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+    }
+
+    .submit-button {
+        background: linear-gradient(135deg, var(--taupe) 0%, var(--mocha) 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    .submit-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(90, 77, 66, 0.3);
+    }
+
+    .no-group-alert {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        color: #856404;
+    }
+
+    .alert-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #856404;
+    }
+
+    .action-link {
+        background: var(--taupe);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        transition: background 0.3s ease;
+    }
+
+    .action-link:hover {
+        background: var(--mocha);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .submission-container {
+            padding: 0 0.5rem;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+        }
+        
+        .submission-card {
+            padding: 1.5rem;
+        }
+        
+        .info-item {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="submission-container">
+    <div class="page-header">
+        <h1 class="page-title">Project Submission</h1>
+        <p class="page-subtitle">Submit your project work for review</p>
+    </div>
+
+    {% if group %}
+        <div class="submission-card">
+            <!-- Essential Group Info -->
+            <div class="group-info">
+                <div class="info-item">
+                    <span class="info-label">Group:</span>
+                    <span class="info-value">{{ group.name }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Topic:</span>
+                    <span class="info-value">{{ group.topic.title|default:"Not assigned" }}</span>
+                </div>
+            </div>
+
+            <!-- Submission Form -->
+            <form method="post" enctype="multipart/form-data" class="submission-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.file.id_for_label }}">Project File</label>
+                    {{ form.file }}
+                    {% if form.file.help_text %}
+                        <small class="form-help">{{ form.file.help_text }}</small>
+                    {% endif %}
+                    {% for error in form.file.errors %}
+                        <div class="form-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.note.id_for_label }}">Notes (Optional)</label>
+                    {{ form.note }}
+                    {% if form.note.help_text %}
+                        <small class="form-help">{{ form.note.help_text }}</small>
+                    {% endif %}
+                    {% for error in form.note.errors %}
+                        <div class="form-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="submit-button">
+                    <i class="bi bi-cloud-arrow-up-fill"></i> Submit Project
+                </button>
+            </form>
+        </div>
+
+    {% else %}
+        <!-- No Group State -->
+        <div class="no-group-alert">
+            <div class="alert-icon">
+                <i class="bi bi-people"></i>
+            </div>
+            <h3>No Group Assigned</h3>
+            <p>You need to be part of a project group to submit your work.</p>
+            <p>Please contact your teacher to be assigned to a group.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

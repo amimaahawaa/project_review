@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% block title %}About Us{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Premium Nude Color Palette */
+  :root {
+    --ivory: #FFFFF8;
+    --linen: #FAF5EC;
+    --cashmere: #E8DBC5;
+    --taupe: #B8A99A;
+    --mocha: #8B7D6B;
+    --umber: #5E5347;
+    --slate: #7D8B99;
+    --charcoal: #3A4149;
+  }
+
+  body {
+    background-color: var(--ivory);
+    font-family: 'Georgia', serif;
+    line-height: 1.8;
+  }
+
+  .about-container {
+    max-width: 1000px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+  }
+
+  .about-card {
+    background-color: var(--linen);
+    border-radius: 16px;
+    padding: 4rem;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    border-top: 8px solid var(--taupe);
+    border-left: 1px solid var(--cashmere);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+    opacity: 0.1;
+    z-index: 0;
+  }
+
+  h2 {
+    color: var(--umber);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    font-size: 2.5rem;
+  }
+
+  h2::after {
+    content: "";
+    display: block;
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--taupe), var(--cashmere));
+    margin: 1.5rem auto 0;
+    border-radius: 2px;
+  }
+
+  .university-logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 1.5rem;
+    filter: sepia(30%) brightness(90%);
+  }
+
+  .dept-name {
+    color: var(--mocha);
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 3rem;
+    position: relative;
+    display: inline-block;
+  }
+
+  .dept-name::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 2px;
+    background: var(--taupe);
+  }
+
+  h4 {
+    color: var(--mocha);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .section-divider {
+    border-bottom: 2px solid var(--cashmere);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .section-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--cashmere);
+    margin-left: 1rem;
+  }
+
+  p {
+    color: var(--charcoal);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-list {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .feature-list li {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+    color: var(--charcoal);
+    font-size: 1.1rem;
+  }
+
+  .feature-list li::before {
+    content: "•";
+    color: var(--taupe);
+    font-size: 2rem;
+    position: absolute;
+    left: 0;
+    top: -0.5rem;
+  }
+
+  .team-card {
+    background-color: var(--ivory);
+    border-radius: 12px;
+    padding: 2rem;
+    height: 100%;
+    transition: all 0.4s;
+    border: 1px solid var(--cashmere);
+    text-align: center;
+  }
+
+  .team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+
+  .team-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--cashmere);
+    margin: 0 auto 1.5rem;
+    filter: grayscale(20%) contrast(110%);
+  }
+
+  .team-name {
+    color: var(--umber);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .team-role {
+    color: var(--slate);
+    font-style: italic;
+  }
+
+  .stats-section {
+    background-color: var(--ivory);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 3rem 0;
+    border: 1px solid var(--cashmere);
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .stat-number {
+    color: var(--taupe);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    color: var(--slate);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .about-container {
+      padding: 0 1rem;
+    }
+    
+    .about-card {
+      padding: 2rem;
+    }
+    
+    h2 {
+      font-size: 2rem;
+    }
+    
+    .team-img {
+      width: 100px;
+      height: 100px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-container">
+  <div class="about-card">
+    <h2>About Project Review System</h2>
+    
+    <div class="text-center mb-5">
+      <img src="https://via.placeholder.com/150" alt="University Logo" class="university-logo">
+      <h4 class="dept-name">Department of Computer Science</h4>
+    </div>
+    
+    <div class="mission-section mb-5">
+      <div class="section-divider">
+        <h4>Our Mission</h4>
+      </div>
+      <p>To revolutionize academic project management through an intuitive digital platform that fosters collaboration between students and faculty, while maintaining the highest standards of academic integrity and excellence.</p>
+      <p>Our system bridges the gap between project conception and evaluation, providing tools for seamless topic allocation, progress tracking, and comprehensive review.</p>
+    </div>
+    
+    <div class="stats-section">
+      <div class="row">
+        <div class="col-md-4 stat-item">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Projects Reviewed</div>
+        </div>
+        <div class="col-md-4 stat-item">
+          <div class="stat-number">98%</div>
+          <div class="stat-label">Satisfaction Rate</div>
+        </div>
+        <div class="col-md-4 stat-item">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Faculty Members</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="features-section mb-5">
+      <div class="section-divider">
+        <h4>Key Features</h4>
+      </div>
+      <ul class="feature-list">
+        <li>Automated group formation with intelligent matching algorithms</li>
+        <li>Comprehensive topic allocation system with preference management</li>
+        <li>Secure digital submission portal with version control</li>
+        <li>Faculty review dashboard with rubric-based evaluation</li>
+        <li>Real-time progress tracking and milestone management</li>
+        <li>Plagiarism detection integration</li>
+        <li>Comprehensive reporting and analytics</li>
+      </ul>
+    </div>
+    
+    <div class="team-section">
+      <div class="section-divider">
+        <h4>Development Team</h4>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="team-card">
+            <img src="https://via.placeholder.com/150" class="team-img" alt="Lead Developer">
+            <h5 class="team-name">Your Name</h5>
+            <p class="team-role">Lead Developer</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="team-card">
+            <img src="https://via.placeholder.com/150" class="team-img" alt="UI Designer">
+            <h5 class="team-name">Team Member</h5>
+            <p class="team-role">UI/UX Designer</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="team-card">
+            <img src="https://via.placeholder.com/150" class="team-img" alt="Advisor">
+            <h5 class="team-name">Dr. Advisor</h5>
+            <p class="team-role">Faculty Advisor</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

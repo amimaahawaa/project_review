@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --ivory: #FFFFF5;
+        --linen: #F5F0E6;
+        --peach: #F8D8B8;
+        --taupe: #A89B8C;
+        --mocha: #7A6B5E;
+        --umber: #5A4D42;
+        --slate: #6C7A89;
+        --charcoal: #2A2E35;
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    /* Content Area Styling Only */
+    .content-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    /* Header Section */
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, var(--linen) 0%, #f9f6f1 100%);
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(168, 155, 140, 0.1);
+    }
+
+    .header-section h2 {
+        color: var(--umber);
+        font-weight: 700;
+        font-size: 2.2rem;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-warning {
+        background: linear-gradient(135deg, var(--peach) 0%, #f0c9a1 100%);
+        color: var(--umber);
+    }
+
+    .btn-warning:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(248, 216, 184, 0.3);
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #e8c4c4 0%, #d8a8a8 100%);
+        color: #8b4513;
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(232, 196, 196, 0.3);
+    }
+
+    /* Group Info Section */
+    .group-info-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        margin-bottom: 2rem;
+        border: 1px solid rgba(168, 155, 140, 0.1);
+        border-left: 4px solid var(--peach);
+    }
+
+    .group-info-card h2 {
+        color: var(--umber);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--peach);
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .info-item {
+        background: var(--ivory);
+        padding: 1.25rem;
+        border-radius: 12px;
+        border: 1px solid rgba(168, 155, 140, 0.1);
+    }
+
+    .info-label {
+        color: var(--mocha);
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-value {
+        color: var(--charcoal);
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    /* Members Table Section */
+    .members-section {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(168, 155, 140, 0.1);
+    }
+
+    .section-header {
+        background: linear-gradient(135deg, var(--taupe) 0%, var(--mocha) 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+        font-weight: 600;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: var(--ivory);
+    }
+
+    .custom-table thead th {
+        background: var(--linen);
+        color: var(--umber);
+        font-weight: 600;
+        padding: 1.25rem;
+        text-align: left;
+        border-bottom: 2px solid var(--peach);
+        position: sticky;
+        top: 0;
+    }
+
+    .custom-table tbody td {
+        padding: 1.25rem;
+        border-bottom: 1px solid rgba(168, 155, 140, 0.1);
+        color: var(--charcoal);
+        transition: var(--transition);
+    }
+
+    .custom-table tbody tr {
+        background: white;
+        transition: var(--transition);
+    }
+
+    .custom-table tbody tr:hover {
+        background: rgba(248, 216, 184, 0.15);
+        transform: translateX(4px);
+    }
+
+    .custom-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .text-center {
+        text-align: center;
+        color: var(--slate);
+        font-style: italic;
+    }
+
+    /* Action Button Section */
+    .action-section {
+        text-align: center;
+        padding: 2.5rem;
+        background: linear-gradient(135deg, var(--linen) 0%, #f9f6f1 100%);
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(168, 155, 140, 0.1);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--taupe) 0%, var(--mocha) 100%);
+        color: white;
+        padding: 1.25rem 2.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        box-shadow: 0 6px 18px rgba(90, 77, 66, 0.25);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(90, 77, 66, 0.35);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .header-section {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+        
+        .action-buttons {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .content-container {
+            padding: 0.5rem;
+        }
+        
+        .header-section h2 {
+            font-size: 1.8rem;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+        }
+        
+        .custom-table thead th,
+        .custom-table tbody td {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .section-header {
+            padding: 1.25rem;
+        }
+        
+        .action-section {
+            padding: 1.5rem;
+        }
+        
+        .btn-primary {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .header-section h2 {
+            font-size: 1.5rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .custom-table thead {
+            display: none;
+        }
+        
+        .custom-table tbody tr {
+            display: block;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .custom-table tbody td {
+            display: block;
+            text-align: right;
+            padding: 0.75rem;
+            position: relative;
+            border-bottom: 1px solid rgba(168, 155, 140, 0.1);
+        }
+        
+        .custom-table tbody td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 0.75rem;
+            font-weight: 600;
+            color: var(--mocha);
+            text-align: left;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <!-- Header Section -->
+    <div class="header-section">
+        <h2>{{ group.name }}</h2>
+        <div class="action-buttons">
+            <a href="{% url 'group_update' group.id %}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a href="{% url 'group_delete' group.id %}" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Delete
+            </a>
+        </div>
+    </div>
+    
+    <!-- Group Information -->
+    <div class="group-info-card">
+        <h2>Group: {{ group.name }}</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">
+                    <i class="bi bi-journal-bookmark"></i> Topic
+                </div>
+                <div class="info-value">{{ group.topic }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">
+                    <i class="bi bi-calendar"></i> Created At
+                </div>
+                <div class="info-value">{{ group.created_at|date:"d M Y" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Members Table -->
+    <div class="members-section">
+        <div class="section-header">
+            <i class="bi bi-people-fill"></i> Members
+        </div>
+        <div class="table-container">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Roll No</th>
+                        <th>Division</th>
+                        <th>Semester</th>
+                        <th>Joined At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in members %}
+                    <tr>
+                        <td data-label="#">{{ forloop.counter }}</td>
+                        <td data-label="Username">{{ member.student.username }}</td>
+                        <td data-label="Email">{{ member.student.email }}</td>
+                        <td data-label="Roll No">{{ member.student.roll_no }}</td>
+                        <td data-label="Division">{{ member.student.division }}</td>
+                        <td data-label="Semester">{{ member.student.semester }}</td>
+                        <td data-label="Joined At">{{ member.joined_at|date:"d M Y, H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No members assigned yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Action Button -->
+    <div class="action-section">
+        <a href="{% url 'assign_members' group.id %}" class="btn btn-primary">
+            <i class="bi bi-people"></i> Manage Members
+        </a>
+    </div>
+</div>
+
+<script>
+    // Add data-labels for mobile responsiveness
+    document.addEventListener('DOMContentLoaded', function() {
+        const headers = document.querySelectorAll('.custom-table thead th');
+        const rows = document.querySelectorAll('.custom-table tbody tr');
+        
+        headers.forEach((header, index) => {
+            const label = header.textContent.trim();
+            rows.forEach(row => {
+                const cell = row.querySelectorAll('td')[index];
+                if (cell) {
+                    cell.setAttribute('data-label', label);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

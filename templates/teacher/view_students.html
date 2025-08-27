@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% block title %}View Students{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Premium Nude Color Palette */
+  :root {
+    --ivory: #FFFFF8;
+    --linen: #FAF5EC;
+    --cashmere: #E8DBC5;
+    --taupe: #B8A99A;
+    --mocha: #8B7D6B;
+    --umber: #5E5347;
+    --slate: #7D8B99;
+    --charcoal: #3A4149;
+  }
+
+  body {
+    background-color: var(--ivory);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .student-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-header {
+    color: var(--umber);
+    font-weight: 700;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid var(--taupe);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .filter-card {
+    background-color: var(--linen);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    border: 1px solid var(--cashmere);
+  }
+
+  .filter-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    align-items: end;
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+
+  .form-label {
+    color: var(--mocha);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .form-control {
+    background-color: var(--ivory);
+    border: 1px solid var(--cashmere);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    color: var(--charcoal);
+    transition: all 0.3s;
+  }
+
+  .form-control:focus {
+    border-color: var(--taupe);
+    box-shadow: 0 0 0 3px rgba(184, 169, 154, 0.15);
+    outline: none;
+  }
+
+  .btn-filter {
+    background-color: var(--taupe);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s;
+    height: fit-content;
+  }
+
+  .btn-filter:hover {
+    background-color: var(--mocha);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .student-table {
+    background-color: var(--linen);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border: 1px solid var(--cashmere);
+  }
+
+  .table-header {
+    background: linear-gradient(135deg, var(--taupe), var(--mocha));
+    color: white;
+  }
+
+  .table th {
+    padding: 1rem;
+    font-weight: 600;
+    border-bottom: 3px solid var(--peach);
+  }
+
+  .table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(184, 169, 154, 0.2);
+    vertical-align: middle;
+  }
+
+  .btn-action {
+    background-color: var(--taupe);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-action:hover {
+    background-color: var(--mocha);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--slate);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .student-container {
+      padding: 0 1rem;
+    }
+    
+    .filter-form {
+      grid-template-columns: 1fr;
+    }
+    
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="student-container">
+  <div class="page-header">
+    <h2>Student Directory</h2>
+    <div class="student-count">{{ students.count }} students found</div>
+  </div>
+
+  <div class="filter-card">
+    <form method="get" class="filter-form">
+      <div class="form-group">
+        <label class="form-label">Semester</label>
+        <select name="semester" class="form-control">
+          <option value="">All Semesters</option>
+          {% for value, label in semester_choices %}
+            <option value="{{ value }}" {% if current_semester == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Division</label>
+        <select name="division" class="form-control">
+          <option value="">All Divisions</option>
+          {% for value, label in division_choices %}
+            <option value="{{ value }}" {% if current_division == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <button type="submit" class="btn-filter">
+        <i class="bi bi-funnel-fill"></i> Apply Filters
+      </button>
+    </form>
+  </div>
+
+  <div class="student-table">
+    <table class="table table-hover mb-0">
+      <thead class="table-header">
+        <tr>
+          <th>Name</th>
+          <th>Roll No</th>
+          <th>Semester</th>
+          <th>Division</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+        <tr>
+          <td>{{ student.username }}</td>
+          <td>{{ student.roll_no|default:"-" }}</td>
+          <td>{{ student.semester|default:"-" }}</td>
+          <td>{{ student.division|default:"-" }}</td>
+          <td>
+            <a href="{% url 'student_detail' student.id %}" class="btn btn-sm btn-secondary">
+              <i class="bi bi-eye-fill"></i> View
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="empty-state">
+            <i class="bi bi-people" style="font-size: 2rem; display: block; margin-bottom: 1rem;"></i>
+            No students found matching your filters
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

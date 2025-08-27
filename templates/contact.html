@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Sophisticated Nude Color Palette */
+  :root {
+    --ivory: #FFFFF5;
+    --linen: #F5F0E6;
+    --peach: #F8D8B8;
+    --taupe: #A89B8C;
+    --mocha: #7A6B5E;
+    --umber: #5A4D42;
+    --slate: #6C7A89;
+    --charcoal: #2A2E35;
+  }
+
+  body {
+    background-color: var(--ivory);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 1rem;
+  }
+
+  .contact-card {
+    background-color: var(--linen);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border-top: 5px solid var(--peach);
+  }
+
+  .card-body {
+    padding: 3rem;
+  }
+
+  .contact-title {
+    color: var(--umber);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+
+  .contact-title::after {
+    content: "";
+    display: block;
+    width: 100px;
+    height: 3px;
+    background: var(--taupe);
+    margin: 1.5rem auto 0;
+  }
+
+  .info-card {
+    background-color: var(--ivory);
+    border-radius: 8px;
+    height: 100%;
+    transition: transform 0.3s;
+    border: 1px solid rgba(168, 155, 140, 0.2);
+  }
+
+  .info-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .info-icon {
+    color: var(--taupe);
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-title {
+    color: var(--mocha);
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .info-text {
+    color: var(--slate);
+    line-height: 1.6;
+  }
+
+  .form-title {
+    color: var(--mocha);
+    font-weight: 600;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--peach);
+    margin-bottom: 2rem;
+  }
+
+  .form-label {
+    color: var(--umber);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control {
+    background-color: var(--ivory);
+    border: 1px solid var(--taupe);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s;
+  }
+
+  .form-control:focus {
+    border-color: var(--mocha);
+    box-shadow: 0 0 0 3px rgba(168, 155, 140, 0.2);
+  }
+
+  .btn-send {
+    background-color: var(--taupe);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .btn-send:hover {
+    background-color: var(--mocha);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  @media (max-width: 768px) {
+    .card-body {
+      padding: 2rem;
+    }
+    
+    .contact-title {
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+    }
+    
+    .info-card {
+      margin-bottom: 1.5rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contact-container">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="contact-card shadow">
+                <div class="card-body">
+                    <h2 class="contact-title">Contact Us</h2>
+                    
+                    <div class="row mb-5 g-4">
+                        <div class="col-md-6">
+                            <div class="info-card p-4 text-center">
+                                <i class="bi bi-geo-alt-fill info-icon"></i>
+                                <h5 class="info-title">Our Location</h5>
+                                <p class="info-text">
+                                    Computer Science Department<br>
+                                    University Campus<br>
+                                    City, State - 123456
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card p-4 text-center">
+                                <i class="bi bi-envelope-fill info-icon"></i>
+                                <h5 class="info-title">Email Us</h5>
+                                <p class="info-text">
+                                    projects@university.edu<br>
+                                    support@university.edu
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="form-title">Send us a Message</h4>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Your Name</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="subject" class="form-label">Subject</label>
+                                <input type="text" class="form-control" id="subject" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="message" class="form-label">Message</label>
+                                <textarea class="form-control" id="message" rows="5" required></textarea>
+                            </div>
+                            <div class="col-12 text-center mt-4">
+                                <button type="submit" class="btn-send">Send Message</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

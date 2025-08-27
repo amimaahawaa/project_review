@@ -1,0 +1,597 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --ivory: #FFFFF5;
+        --linen: #F5F0E6;
+        --peach: #F8D8B8;
+        --taupe: #A89B8C;
+        --mocha: #7A6B5E;
+        --umber: #5A4D42;
+        --slate: #6C7A89;
+        --charcoal: #2A2E35;
+    }
+
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--peach);
+    }
+
+    .dashboard-title {
+        color: var(--umber);
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--taupe) 0%, var(--mocha) 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(90, 77, 66, 0.3);
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(40, 167, 69, 0.3);
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--linen);
+        transition: transform 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-card-primary {
+        border-left: 4px solid #007bff;
+    }
+
+    .stat-card-warning {
+        border-left: 4px solid #ffc107;
+    }
+
+    .stat-card-info {
+        border-left: 4px solid #17a2b8;
+    }
+
+    .stat-card-success {
+        border-left: 4px solid #28a745;
+    }
+
+    .stat-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stat-text h6 {
+        color: var(--mocha);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-text h4 {
+        color: var(--umber);
+        font-weight: 700;
+        margin: 0;
+        font-size: 2rem;
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+        border: 1px solid var(--linen);
+        overflow: hidden;
+    }
+
+    .section-header {
+        background: var(--linen);
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(168, 155, 140, 0.1);
+    }
+
+    .section-title {
+        color: var(--umber);
+        font-weight: 600;
+        margin: 0;
+        font-size: 1.3rem;
+    }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+
+    .action-btn {
+        background: var(--ivory);
+        padding: 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--charcoal);
+        transition: all 0.3s ease;
+        border: 1px solid var(--linen);
+        text-align: center;
+    }
+
+    .action-btn:hover {
+        background: var(--peach);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--taupe);
+    }
+
+    .action-text {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Recent Project Activity */
+    .recent-activity {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--linen);
+        margin-bottom: 2rem;
+    }
+
+    .activity-list {
+        padding: 1.5rem;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid var(--linen);
+        gap: 1rem;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--linen);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--taupe);
+        font-size: 1.2rem;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-text {
+        color: var(--charcoal);
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-time {
+        color: var(--mocha);
+        font-size: 0.8rem;
+    }
+
+    /* Project Management Tips */
+    .project-tips {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--linen);
+        margin-bottom: 2rem;
+    }
+
+    .tips-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .tip-card {
+        background: var(--ivory);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--linen);
+    }
+
+    .tip-icon {
+        font-size: 2rem;
+        color: var(--taupe);
+        margin-bottom: 1rem;
+    }
+
+    .tip-title {
+        color: var(--umber);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .tip-content {
+        color: var(--charcoal);
+        line-height: 1.5;
+        font-size: 0.9rem;
+    }
+
+    /* Upcoming Deadlines */
+    .deadlines-section {
+        background: linear-gradient(135deg, var(--linen) 0%, #f9f6f1 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1px solid rgba(168, 155, 140, 0.1);
+    }
+
+    .deadline-item {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #ffc107;
+    }
+
+    .deadline-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .deadline-info {
+        flex: 1;
+    }
+
+    .deadline-project {
+        color: var(--umber);
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .deadline-date {
+        color: var(--mocha);
+        font-size: 0.9rem;
+    }
+
+    .deadline-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 0 0.5rem;
+        }
+        
+        .dashboard-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .dashboard-title {
+            font-size: 2rem;
+        }
+        
+        .header-actions {
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .actions-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .tips-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .deadline-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .deadline-actions {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <i class="bi bi-clipboard-data"></i> Project Management Dashboard
+        </h1>
+        <div class="header-actions">
+            <a href="{% url 'create_topic' %}" class="btn btn-primary">
+                <i class="bi bi-journal-plus"></i> New Project Topic
+            </a>
+            <a href="{% url 'create_group' %}" class="btn btn-success">
+                <i class="bi bi-people-fill"></i> Create Project Group
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <a href="{% url 'view_students' %}" class="stat-card stat-card-primary">
+            <div class="stat-content">
+                <div class="stat-text">
+                    <h6>Student Developers</h6>
+                    <h4>{{ students_count }}</h4>
+                </div>
+                <i class="bi bi-code-slash stat-icon text-primary"></i>
+            </div>
+        </a>
+
+        <a href="{% url 'submissions_list' %}" class="stat-card stat-card-warning">
+            <div class="stat-content">
+                <div class="stat-text">
+                    <h6>Projects to Review</h6>
+                    <h4>{{ pending_reviews_count }}</h4>
+                </div>
+                <i class="bi bi-file-earmark-code stat-icon text-warning"></i>
+            </div>
+        </a>
+
+        <a href="{% url 'topics_list' %}" class="stat-card stat-card-info">
+            <div class="stat-content">
+                <div class="stat-text">
+                    <h6>Project Topics</h6>
+                    <h4>{{ topics_count }}</h4>
+                </div>
+                <i class="bi bi-lightbulb stat-icon text-info"></i>
+            </div>
+        </a>
+
+        <a href="{% url 'group_list' %}" class="stat-card stat-card-success">
+            <div class="stat-content">
+                <div class="stat-text">
+                    <h6>Project Teams</h6>
+                    <h4>{{ groups_count }}</h4>
+                </div>
+                <i class="bi bi-diagram-3 stat-icon text-success"></i>
+            </div>
+        </a>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <div class="section-header">
+            <h3 class="section-title">Project Management</h3>
+        </div>
+        <div class="actions-grid">
+            <a href="{% url 'view_students' %}" class="action-btn">
+                <div class="action-icon">
+                    <i class="bi bi-person-badge"></i>
+                </div>
+                <div class="action-text">Manage Developers</div>
+            </a>
+
+            <a href="{% url 'submissions_list' %}" class="action-btn">
+                <div class="action-icon">
+                    <i class="bi bi-file-check"></i>
+                </div>
+                <div class="action-text">Review Projects</div>
+            </a>
+
+            <a href="{% url 'topics_list' %}" class="action-btn">
+                <div class="action-icon">
+                    <i class="bi bi-journal-bookmark"></i>
+                </div>
+                <div class="action-text">Project Ideas</div>
+            </a>
+
+            <a href="{% url 'group_list' %}" class="action-btn">
+                <div class="action-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="action-text">Development Teams</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Project Activity -->
+    <div class="recent-activity">
+        <div class="section-header">
+            <h3 class="section-title">Recent Project Activity</h3>
+        </div>
+        <div class="activity-list">
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-text">Web Development Team submitted Phase 1</div>
+                    <div class="activity-time">2 hours ago</div>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="bi bi-chat-dots"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-text">New query from AI Project Team about requirements</div>
+                    <div class="activity-time">5 hours ago</div>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-text">You approved Mobile App project submission</div>
+                    <div class="activity-time">Yesterday</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Management Tips -->
+    <div class="project-tips">
+        <div class="section-header">
+            <h3 class="section-title">Project Management Tips</h3>
+        </div>
+        <div class="tips-grid">
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="bi bi-clock"></i>
+                </div>
+                <h4 class="tip-title">Set Clear Deadlines</h4>
+                <p class="tip-content">
+                    Establish realistic milestones for each project phase. Clear deadlines help teams stay focused and organized.
+                </p>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="bi bi-chat"></i>
+                </div>
+                <h4 class="tip-title">Regular Check-ins</h4>
+                <p class="tip-content">
+                    Schedule weekly progress meetings with project teams to address challenges and provide guidance.
+                </p>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="bi bi-lightning"></i>
+                </div>
+                <h4 class="tip-title">Agile Feedback</h4>
+                <p class="tip-content">
+                    Provide immediate, constructive feedback on submissions. Quick turnaround keeps projects moving forward.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Project Deadlines -->
+    <div class="deadlines-section">
+        <div class="section-header">
+            <h3 class="section-title">Upcoming Project Deadlines</h3>
+        </div>
+        <div class="deadline-list">
+            <div class="deadline-item">
+                <div class="deadline-info">
+                    <div class="deadline-project">E-commerce Website - Phase 2</div>
+                    <div class="deadline-date">Due: March 15, 2024 - 3 days remaining</div>
+                </div>
+                <div class="deadline-actions">
+                    <a href="#" class="btn btn-primary btn-sm">View Details</a>
+                </div>
+            </div>
+
+            <div class="deadline-item">
+                <div class="deadline-info">
+                    <div class="deadline-project">Mobile App Development</div>
+                    <div class="deadline-date">Due: March 20, 2024 - 8 days remaining</div>
+                </div>
+                <div class="deadline-actions">
+                    <a href="#" class="btn btn-primary btn-sm">View Details</a>
+                </div>
+            </div>
+
+            <div class="deadline-item">
+                <div class="deadline-info">
+                    <div class="deadline-project">AI Chatbot Project</div>
+                    <div class="deadline-date">Due: March 25, 2024 - 13 days remaining</div>
+                </div>
+                <div class="deadline-actions">
+                    <a href="#" class="btn btn-primary btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

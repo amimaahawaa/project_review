@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Topic{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Elegant Nude Color Palette */
+  :root {
+    --ivory: #FFFFF5;
+    --linen: #F5F0E6;
+    --peach: #F8D8B8;
+    --taupe: #A89B8C;
+    --mocha: #7A6B5E;
+    --umber: #5A4D42;
+    --slate: #6C7A89;
+    --charcoal: #2A2E35;
+  }
+
+  .topic-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .topic-card {
+    background-color: var(--linen);
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border-top: 5px solid var(--peach);
+  }
+
+  .topic-title {
+    color: var(--umber);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  .topic-title::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: var(--taupe);
+    margin: 1rem auto;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    color: var(--mocha);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .form-control {
+    background-color: var(--ivory);
+    border: 1px solid var(--taupe);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s;
+    color: var(--charcoal);
+  }
+
+  .form-control:focus {
+    border-color: var(--mocha);
+    box-shadow: 0 0 0 3px rgba(168, 155, 140, 0.2);
+    outline: none;
+  }
+
+  .btn-create {
+    background-color: var(--taupe);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+    margin-top: 1rem;
+  }
+
+  .btn-create:hover {
+    background-color: var(--mocha);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .btn-back {
+    color: var(--taupe);
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    margin-top: 1.5rem;
+    transition: color 0.3s;
+  }
+
+  .btn-back:hover {
+    color: var(--mocha);
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="topic-container">
+    <div class="topic-card">
+        <h2 class="topic-title">Create Topic</h2>
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label" for="id_title">Title</label>
+                {{ form.title }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="id_description">Description</label>
+                {{ form.description }}
+            </div>
+            
+            <button type="submit" class="btn-create">
+                <i class="bi bi-save"></i> Create Topic
+            </button>
+            
+            <a href="{% url 'topics_list' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> Back to Topics
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

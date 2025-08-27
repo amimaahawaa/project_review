@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Create Group{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Premium Nude Color Palette */
+  :root {
+    --ivory: #FFFFF8;
+    --linen: #FAF5EC;
+    --cashmere: #E8DBC5;
+    --taupe: #B8A99A;
+    --mocha: #8B7D6B;
+    --umber: #5E5347;
+    --slate: #7D8B99;
+    --charcoal: #3A4149;
+  }
+
+  body {
+    background-color: var(--ivory);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .group-container {
+    max-width: 700px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .group-card {
+    background-color: var(--linen);
+    border-radius: 14px;
+    padding: 3rem;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    border-left: 5px solid var(--taupe);
+    border-right: 1px solid var(--cashmere);
+    border-bottom: 1px solid var(--cashmere);
+  }
+
+  h3 {
+    color: var(--umber);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 2rem;
+    letter-spacing: -0.5px;
+    position: relative;
+  }
+
+  h3::after {
+    content: "";
+    display: block;
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--taupe), var(--cashmere));
+    margin: 1.2rem auto 0;
+    border-radius: 2px;
+  }
+
+  .form-group {
+    margin-bottom: 2rem;
+  }
+
+  label {
+    color: var(--mocha);
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+    display: block;
+    font-size: 1.05rem;
+  }
+
+  input, textarea, select {
+    background-color: var(--ivory);
+    border: 1px solid var(--cashmere);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    width: 100%;
+    transition: all 0.4s;
+    color: var(--charcoal);
+    font-size: 1rem;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--taupe);
+    box-shadow: 0 0 0 4px rgba(184, 169, 154, 0.15);
+    outline: none;
+  }
+
+  .btn-save {
+    background: linear-gradient(135deg, var(--taupe), var(--mocha));
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.4s;
+    display: block;
+    margin: 3rem auto 0;
+    width: fit-content;
+    box-shadow: 0 4px 12px rgba(139, 125, 107, 0.2);
+    letter-spacing: 0.5px;
+  }
+
+  .btn-save:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(139, 125, 107, 0.3);
+    background: linear-gradient(135deg, var(--mocha), var(--umber));
+  }
+
+  /* Error styling */
+  .errorlist {
+    color: #C17C74;
+    font-size: 0.9rem;
+    margin-top: 0.7rem;
+    padding-left: 0;
+    list-style: none;
+    font-weight: 500;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .group-container {
+      padding: 0 1rem;
+    }
+    
+    .group-card {
+      padding: 2rem;
+    }
+    
+    h3 {
+      font-size: 1.7rem;
+      margin-bottom: 2rem;
+    }
+    
+    input, textarea, select {
+      padding: 0.9rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="group-container">
+  <div class="group-card">
+    <h3>Create Group</h3>
+    <form method="post">
+      {% csrf_token %}
+      
+      {% for field in form %}
+      <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+          {{ field.errors }}
+        {% endif %}
+        {% if field.help_text %}
+          <small class="form-text" style="color: var(--slate); margin-top: 0.5rem; display: block;">
+            {{ field.help_text }}
+          </small>
+        {% endif %}
+      </div>
+      {% endfor %}
+      
+      <button type="submit" class="btn-save">
+        <i class="bi bi-save-fill" style="margin-right: 0.5rem;"></i> Save & Assign Members
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

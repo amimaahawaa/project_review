@@ -1,0 +1,255 @@
+{% block title %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Enhanced Nude Color Palette */
+  :root {
+    --ivory: #FFFFF0;
+    --linen: #FAF0E6;
+    --peach: #FFE5B4;
+    --taupe: #8B7D6B;
+    --mocha: #6F4E37;
+    --umber: #635147;
+    --slate: #708090;
+    --charcoal: #36454F;
+  }
+
+  body {
+    background-color: var(--ivory);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+
+  body::before {
+    content: "";
+    background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.08;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+  }
+
+  .signup-card {
+    background-color: var(--linen);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 520px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    border-top: 5px solid var(--peach);
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .signup-title {
+    color: var(--mocha);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1.8rem;
+    position: relative;
+  }
+
+  .signup-title::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: var(--taupe);
+    margin: 1rem auto;
+  }
+
+  .form-group {
+    margin-bottom: 1.2rem;
+  }
+
+  label {
+    color: var(--umber);
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    display: block;
+  }
+
+  input, select {
+    background-color: var(--ivory);
+    border: 1px solid var(--taupe);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    transition: all 0.3s;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--mocha);
+    box-shadow: 0 0 0 3px rgba(139, 125, 107, 0.2);
+    outline: none;
+  }
+
+  .error-message {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+
+  .btn-signup {
+    background-color: var(--taupe);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.3s;
+    margin-top: 1.5rem;
+  }
+
+  .btn-signup:hover {
+    background-color: var(--umber);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--slate);
+  }
+
+  .login-link a {
+    color: var(--taupe);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .login-link a:hover {
+    color: var(--mocha);
+    text-decoration: underline;
+  }
+
+  /* Role-specific fields */
+  .student-only, .teacher-only {
+    transition: all 0.3s ease;
+  }
+
+  /* Animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 576px) {
+    .signup-card {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+    
+    .row.g-2 > [class^="col-"] {
+      padding-bottom: 0.5rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="signup-card">
+  <h3 class="signup-title">Create Account</h3>
+  <form method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="row g-2">
+      <div class="col-12 form-group">
+        {{ form.username.label_tag }}
+        {{ form.username }}
+        {% if form.username.errors %}
+          <div class="error-message">{{ form.username.errors }}</div>
+        {% endif %}
+      </div>
+      
+      <div class="col-12 form-group">
+        {{ form.email.label_tag }}
+        {{ form.email }}
+        {% if form.email.errors %}
+          <div class="error-message">{{ form.email.errors }}</div>
+        {% endif %}
+      </div>
+      
+      <div class="col-12 form-group">
+        {{ form.role.label_tag }}
+        {{ form.role }}
+      </div>
+
+      <div class="col-md-6 form-group">
+        {{ form.password1.label_tag }}
+        {{ form.password1 }}
+        {% if form.password1.errors %}
+          <div class="error-message">{{ form.password1.errors }}</div>
+        {% endif %}
+      </div>
+      
+      <div class="col-md-6 form-group">
+        {{ form.password2.label_tag }}
+        {{ form.password2 }}
+        {% if form.password2.errors %}
+          <div class="error-message">{{ form.password2.errors }}</div>
+        {% endif %}
+      </div>
+
+      <!-- student fields -->
+      <div class="col-md-4 student-only form-group">
+        {{ form.division.label_tag }}
+        {{ form.division }}
+      </div>
+      
+      <div class="col-md-4 student-only form-group">
+        {{ form.roll_no.label_tag }}
+        {{ form.roll_no }}
+      </div>
+      
+      <div class="col-md-4 student-only form-group">
+        {{ form.semester.label_tag }}
+        {{ form.semester }}
+      </div>
+
+      <!-- teacher fields -->
+      <div class="col-md-6 teacher-only form-group">
+        {{ form.department.label_tag }}
+        {{ form.department }}
+      </div>
+      
+      <div class="col-md-6 teacher-only form-group">
+        {{ form.subject.label_tag }}
+        {{ form.subject }}
+      </div>
+    </div>
+
+    <button type="submit" class="btn-signup">Sign Up</button>
+  </form>
+  <div class="login-link">Already have an account? <a href="{% url 'login' %}">Login</a></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const role = document.getElementById('id_role');
+  const studentEls = document.querySelectorAll('.student-only');
+  const teacherEls = document.querySelectorAll('.teacher-only');
+  
+  function toggleFields(){
+    const value = role.value;
+    studentEls.forEach(el => el.style.display = (value === 'student') ? 'block' : 'none');
+    teacherEls.forEach(el => el.style.display = (value === 'teacher') ? 'block' : 'none');
+  }
+  
+  role.addEventListener('change', toggleFields);
+  toggleFields(); // Initialize on page load
+});
+</script>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% block title %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Enhanced Nude Color Palette */
+  body::before {
+  content: "";
+  background-image: url('static/images/i1.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.1; /* Adjust between 0 (invisible) to 1 (fully visible) */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+  :root {
+    --ivory: #FFFFF0;
+    --linen: #FAF0E6;
+    --peach: #FFE5B4;
+    --taupe: #8B7D6B;
+    --mocha: #6F4E37;
+    --umber: #635147;
+    --slate: #708090;
+    --charcoal: #36454F;
+  }
+  
+  body {
+    background-color: var(--ivory);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+  
+  
+  .login-card {
+    background-color: var(--linen);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-top: 5px solid var(--peach);
+    max-width: 420px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    animation: fadeIn 0.8s ease-out;
+  }
+  
+  .login-title {
+    color: var(--mocha);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1.8rem;
+    position: relative;
+  }
+  
+  .login-title::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: var(--taupe);
+    margin: 1rem auto;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group label {
+    color: var(--umber);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  
+  .form-control {
+    background-color: var(--ivory);
+    border: 1px solid var(--taupe);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    transition: all 0.3s;
+  }
+  
+  .form-control:focus {
+    border-color: var(--mocha);
+    box-shadow: 0 0 0 3px rgba(139, 125, 107, 0.2);
+    outline: none;
+  }
+  
+  .btn-login {
+    background-color: var(--taupe);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.3s;
+    margin-top: 1rem;
+  }
+  
+  .btn-login:hover {
+    background-color: var(--umber);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .signup-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--slate);
+  }
+  
+  .signup-link a {
+    color: var(--taupe);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .signup-link a:hover {
+    color: var(--mocha);
+    text-decoration: underline;
+  }
+  
+  /* Animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-card">
+  <h3 class="login-title">Login</h3>
+  <form method="post">{% csrf_token %}
+    <div class="form-group">
+      <label for="id_username">Username</label>
+      <input type="text" name="username" class="form-control" required id="id_username">
+    </div>
+    <div class="form-group">
+      <label for="id_password">Password</label>
+      <input type="password" name="password" class="form-control" required id="id_password">
+    </div>
+    <button type="submit" class="btn-login">Login</button>
+  </form>
+  <div class="signup-link">No account? <a href="{% url 'signup' %}">Sign up</a></div>
+</div>
+{% endblock %}

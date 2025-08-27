@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --ivory: #FFFFF5;
+        --linen: #F5F0E6;
+        --peach: #F8D8B8;
+        --taupe: #A89B8C;
+        --mocha: #7A6B5E;
+        --umber: #5A4D42;
+        --slate: #6C7A89;
+        --charcoal: #2A2E35;
+    }
+
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .welcome-title {
+        color: var(--umber);
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .welcome-text {
+        color: var(--mocha);
+        font-size: 1.1rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--linen);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--taupe);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--mocha);
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .dashboard-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .action-card {
+        background: linear-gradient(135deg, var(--linen) 0%, #f9f6f1 100%);
+        padding: 2rem;
+        border-radius: 16px;
+        border: 1px solid rgba(168, 155, 140, 0.1);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .action-icon {
+        font-size: 3rem;
+        color: var(--taupe);
+        margin-bottom: 1rem;
+    }
+
+    .action-title {
+        color: var(--umber);
+        font-weight: 600;
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-description {
+        color: var(--mocha);
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--taupe) 0%, var(--mocha) 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(90, 77, 66, 0.3);
+    }
+
+    .btn-secondary {
+        background: var(--peach);
+        color: var(--umber);
+    }
+
+    .btn-secondary:hover {
+        background: var(--taupe);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .recent-activity {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--linen);
+    }
+
+    .section-title {
+        color: var(--umber);
+        font-weight: 600;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--peach);
+    }
+
+    .activity-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .activity-item {
+        padding: 1rem;
+        border-bottom: 1px solid var(--linen);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        color: var(--taupe);
+        font-size: 1.2rem;
+    }
+
+    .activity-text {
+        color: var(--charcoal);
+        flex: 1;
+    }
+
+    .activity-time {
+        color: var(--mocha);
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 0 0.5rem;
+        }
+        
+        .welcome-title {
+            font-size: 2rem;
+        }
+        
+        .dashboard-stats {
+            grid-template-columns: 1fr;
+        }
+        
+        .dashboard-actions {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-card {
+            padding: 1.5rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h1 class="welcome-title">Welcome, {{ user.username }}!</h1>
+        <p class="welcome-text">
+            This is your student dashboard. Manage your project groups, submit assignments, 
+            and track your academic progress all in one place.
+        </p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <div class="stat-number">{{ groups_count|default:0 }}</div>
+            <div class="stat-label">Project Groups</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ submissions_count|default:0 }}</div>
+            <div class="stat-label">Submissions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ pending_reviews|default:0 }}</div>
+            <div class="stat-label">Pending Reviews</div>
+        </div>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="dashboard-actions">
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <h3 class="action-title">My Groups</h3>
+            <p class="action-description">
+                View and manage your project groups, team members, and group activities.
+            </p>
+            <a href="{% url 'my_group' %}" class="btn btn-primary">
+                <i class="bi bi-arrow-right"></i> View Groups
+            </a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="bi bi-cloud-upload"></i>
+            </div>
+            <h3 class="action-title">Submit Project</h3>
+            <p class="action-description">
+                Upload your project files, track submission status, and view feedback from teachers.
+            </p>
+            <a href="{% url 'project_submission' %}" class="btn btn-primary">
+                <i class="bi bi-upload"></i> Submit Work
+            </a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="bi bi-journal-text"></i>
+            </div>
+            <h3 class="action-title">My Submissions</h3>
+            <p class="action-description">
+                Review your previous submissions, grades, and teacher feedback.
+            </p>
+            <a href="{% url 'view_submissions' %}" class="btn btn-secondary">
+                <i class="bi bi-list-check"></i> View History
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="recent-activity">
+        <h3 class="section-title">Recent Activity</h3>
+        <ul class="activity-list">
+            <li class="activity-item">
+                <i class="bi bi-check-circle-fill activity-icon"></i>
+                <span class="activity-text">Logged in successfully</span>
+                <span class="activity-time">Just now</span>
+            </li>
+            <li class="activity-item">
+                <i class="bi bi-people-fill activity-icon"></i>
+                <span class="activity-text">Joined project group "Web Development Team"</span>
+                <span class="activity-time">2 days ago</span>
+            </li>
+            <li class="activity-item">
+                <i class="bi bi-cloud-upload activity-icon"></i>
+                <span class="activity-text">Submitted project phase 1</span>
+                <span class="activity-time">1 week ago</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="dashboard-actions">
+        <a href="{% url 'student_dashboard' %}" class="btn btn-secondary">
+            <i class="bi bi-house"></i> Dashboard Home
+        </a>
+        <a href="{% url 'profile' %}" class="btn btn-secondary">
+            <i class="bi bi-person"></i> My Profile
+        </a>
+        <a href="{% url 'help_center' %}" class="btn btn-secondary">
+            <i class="bi bi-question-circle"></i> Help Center
+        </a>
+    </div>
+</div>
+{% endblock %}

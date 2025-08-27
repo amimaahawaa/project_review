@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --ivory: #FFFFF5;
+        --linen: #F5F0E6;
+        --peach: #F8D8B8;
+        --taupe: #A89B8C;
+        --mocha: #7A6B5E;
+        --umber: #5A4D42;
+        --slate: #6C7A89;
+        --charcoal: #2A2E35;
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    body {
+        background-color: var(--ivory);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .topic-detail-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .topic-detail-card {
+        background-color: var(--linen);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border-top: 5px solid var(--peach);
+        overflow: hidden;
+        transition: var(--transition);
+    }
+
+    .topic-detail-card:hover {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        transform: translateY(-3px);
+    }
+
+    .topic-header {
+        background-color: var(--taupe);
+        color: white;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .topic-header::before {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .topic-header::after {
+        content: '';
+        position: absolute;
+        bottom: -30px;
+        left: -30px;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+
+    .topic-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .topic-body {
+        padding: 2.5rem;
+    }
+
+    .topic-description {
+        color: var(--charcoal);
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background-color: var(--ivory);
+        border-radius: 8px;
+        border-left: 4px solid var(--peach);
+    }
+
+    .topic-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .meta-item {
+        background-color: var(--ivory);
+        padding: 1.25rem;
+        border-radius: 8px;
+        border: 1px solid rgba(168, 155, 140, 0.2);
+    }
+
+    .meta-label {
+        color: var(--mocha);
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .meta-value {
+        color: var(--charcoal);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .topic-footer {
+        padding: 1.5rem 2.5rem;
+        background-color: rgba(168, 155, 140, 0.05);
+        border-top: 1px solid rgba(168, 155, 140, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-back {
+        background-color: var(--taupe);
+        color: white;
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+    }
+
+    .btn-back:hover {
+        background-color: var(--mocha);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        color: white;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: var(--transition);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-edit {
+        background-color: rgba(168, 155, 140, 0.1);
+        color: var(--mocha);
+        border: 1px solid var(--taupe);
+    }
+
+    .btn-edit:hover {
+        background-color: var(--taupe);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .btn-delete {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-delete:hover {
+        background-color: #dc3545;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .topic-detail-container {
+            padding: 0.5rem;
+        }
+        
+        .topic-header {
+            padding: 1.5rem;
+        }
+        
+        .topic-title {
+            font-size: 1.8rem;
+        }
+        
+        .topic-body {
+            padding: 1.5rem;
+        }
+        
+        .topic-meta {
+            grid-template-columns: 1fr;
+        }
+        
+        .topic-footer {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        .action-buttons {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .topic-title {
+            font-size: 1.5rem;
+        }
+        
+        .topic-description {
+            font-size: 1rem;
+            padding: 1rem;
+        }
+        
+        .btn-back, .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="topic-detail-container">
+    <div class="topic-detail-card">
+        <div class="topic-header">
+            <h1 class="topic-title">
+                <i class="bi bi-journal-bookmark"></i> {{ topic.title }}
+            </h1>
+        </div>
+        
+        <div class="topic-body">
+            <div class="topic-description">
+                {{ topic.description|linebreaks }}
+            </div>
+            
+            <div class="topic-meta">
+                <div class="meta-item">
+                    <div class="meta-label">
+                        <i class="bi bi-calendar"></i> Created At
+                    </div>
+                    <div class="meta-value">{{ topic.created_at|date:"F j, Y" }}</div>
+                </div>
+                
+                {% if topic.created_by %}
+                <div class="meta-item">
+                    <div class="meta-label">
+                        <i class="bi bi-person"></i> Created By
+                    </div>
+                    <div class="meta-value">{{ topic.created_by.username }}</div>
+                </div>
+                {% endif %}
+                
+                <div class="meta-item">
+                    <div class="meta-label">
+                        <i class="bi bi-clock"></i> Last Updated
+                    </div>
+                    <div class="meta-value">{{ topic.created_at|timesince }} ago</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="topic-footer">
+            <a href="{% url 'topics_list' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> Back to Topics
+            </a>
+            
+            <div class="action-buttons">
+                <a href="{% url 'edit_topic' topic.pk %}" class="btn-action btn-edit">
+                    <i class="bi bi-pencil"></i> Edit
+                </a>
+                <a href="{% url 'delete_topic' topic.pk %}" class="btn-action btn-delete">
+                    <i class="bi bi-trash"></i> Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

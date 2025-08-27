@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="student-profile-card">
+        <!-- Header with nude gradient -->
+        <div class="profile-header" style="background: linear-gradient(135deg, #E6D5B8 0%, #E6B8B8 100%);">
+            <div class="header-content">
+                <h2 class="profile-title">
+                    <i class="bi bi-person-badge text-primary"></i> Student Details
+                </h2>
+                <p class="profile-subtitle">Academic Profile Information</p>
+            </div>
+            <a href="{% url 'view_students' %}" class="back-btn">
+                <i class="bi bi-chevron-left"></i> All Students
+            </a>
+        </div>
+        
+        <div class="profile-body">
+            <div class="profile-details">
+                <!-- Detail Cards with original Bootstrap icon colors -->
+                <div class="detail-card">
+                    <div class="detail-icon" style="background: #F8F1E9;">
+                        <i class="bi bi-person-fill text-primary"></i>
+                    </div>
+                    <div class="detail-content">
+                        <h5 class="detail-label">STUDENT NAME</h5>
+                        <p class="detail-value">{{ student.get_full_name|default:student.username }}</p>
+                    </div>
+                </div>
+                
+                <div class="detail-card">
+                    <div class="detail-icon" style="background: #F8F1E9;">
+                        <i class="bi bi-envelope-fill text-success"></i>
+                    </div>
+                    <div class="detail-content">
+                        <h5 class="detail-label">EMAIL ADDRESS</h5>
+                        <p class="detail-value">{{ student.email }}</p>
+                    </div>
+                </div>
+                
+                <div class="detail-card">
+                    <div class="detail-icon" style="background: #F8F1E9;">
+                        <i class="bi bi-123 text-warning"></i>
+                    </div>
+                    <div class="detail-content">
+                        <h5 class="detail-label">ROLL NUMBER</h5>
+                        <p class="detail-value">{{ student.roll_no }}</p>
+                    </div>
+                </div>
+                
+                <div class="detail-card">
+                    <div class="detail-icon" style="background: #F8F1E9;">
+                        <i class="bi bi-building text-info"></i>
+                    </div>
+                    <div class="detail-content">
+                        <h5 class="detail-label">DIVISION</h5>
+                        <p class="detail-value">{{ student.get_division_display }}</p>
+                    </div>
+                </div>
+                
+                <div class="detail-card">
+                    <div class="detail-icon" style="background: #F8F1E9;">
+                        <i class="bi bi-journal-bookmark text-danger"></i>
+                    </div>
+                    <div class="detail-content">
+                        <h5 class="detail-label">ACADEMIC YEAR</h5>
+                        <p class="detail-value">{{ student.get_semester_display }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-sidebar">
+                <div class="avatar-container">
+                    <div class="avatar-circle" style="background: #F0E5D8; color: #8B6B5D;">
+                        <span class="avatar-initials">{{ student.username|first|upper }}</span>
+                    </div>
+                </div>
+                
+                {% if request.user.is_teacher %}
+                <div class="action-buttons">
+                    <button class="btn-action btn-edit">
+                        <i class="bi bi-pencil-fill text-primary"></i> Edit Profile
+                    </button>
+                    <button class="btn-action btn-download">
+                        <i class="bi bi-download text-success"></i> Download Data
+                    </button>
+                    <button class="btn-action btn-delete">
+                        <i class="bi bi-trash-fill text-danger"></i> Remove
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Base Styles */
+    .student-profile-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(139, 107, 93, 0.08);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid #F0E5D8;
+    }
+    
+    /* Header Styles */
+    .profile-header {
+        color: #5C4D3D;
+        padding: 1.75rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+    }
+    
+    .profile-title {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.75rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .profile-subtitle {
+        margin: 0.25rem 0 0 2.8rem;
+        font-weight: 400;
+        font-size: 0.95rem;
+        color: #5C4D3D;
+    }
+    
+    .back-btn {
+        color: #5C4D3D;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(92, 77, 61, 0.2);
+    }
+    
+    .back-btn:hover {
+        background: white;
+        box-shadow: 0 2px 8px rgba(92, 77, 61, 0.1);
+    }
+    
+    /* Body Styles */
+    .profile-body {
+        display: flex;
+        padding: 2rem;
+        gap: 2rem;
+    }
+    
+    .profile-details {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.25rem;
+    }
+    
+    .detail-card {
+        background: #FFFCF9;
+        border-radius: 12px;
+        padding: 1.25rem;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        border: 1px solid #F0E5D8;
+        transition: all 0.3s ease;
+    }
+    
+    .detail-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(139, 107, 93, 0.1);
+    }
+    
+    .detail-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    
+    .detail-content {
+        flex: 1;
+    }
+    
+    .detail-label {
+        color: #8B6B5D;
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .detail-value {
+        color: #5C4D3D;
+        font-size: 1.1rem;
+        margin: 0;
+        font-weight: 500;
+    }
+    
+    /* Sidebar Styles */
+    .profile-sidebar {
+        width: 280px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .avatar-circle {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(139, 107, 93, 0.1);
+    }
+    
+    .avatar-initials {
+        color: inherit;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+    }
+    
+    .btn-action {
+        border: none;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        background: #F8F1E9;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(139, 107, 93, 0.1);
+    }
+    
+    .btn-edit:hover {
+        background: #E6D5B8;
+    }
+    
+    .btn-download:hover {
+        background: #E6D5B8;
+    }
+    
+    .btn-delete:hover {
+        background: #E6B8B8;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .profile-body {
+            flex-direction: column;
+        }
+        
+        .profile-sidebar {
+            width: 100%;
+            margin-top: 2rem;
+        }
+        
+        .profile-details {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

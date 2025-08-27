@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --ivory: #FFFFF5;
+        --linen: #F5F0E6;
+        --peach: #F8D8B8;
+        --taupe: #A89B8C;
+        --mocha: #7A6B5E;
+        --umber: #5A4D42;
+        --slate: #6C7A89;
+        --charcoal: #2A2E35;
+    }
+
+    .help-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .help-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .help-title {
+        color: var(--umber);
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .help-subtitle {
+        color: var(--mocha);
+        font-size: 1.1rem;
+    }
+
+    .search-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .search-input {
+        width: 100%;
+        max-width: 500px;
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--linen);
+        border-radius: 8px;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .category-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--linen);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .category-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .category-icon {
+        font-size: 2.5rem;
+        color: var(--taupe);
+        margin-bottom: 1rem;
+    }
+
+    .category-title {
+        color: var(--umber);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .category-desc {
+        color: var(--mocha);
+        margin-bottom: 1rem;
+    }
+
+    .faq-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .section-title {
+        color: var(--umber);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--peach);
+    }
+
+    .faq-item {
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--linen);
+        padding-bottom: 1rem;
+    }
+
+    .faq-question {
+        color: var(--umber);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+    }
+
+    .faq-answer {
+        color: var(--charcoal);
+        line-height: 1.6;
+    }
+
+    .contact-section {
+        background: var(--linen);
+        padding: 2rem;
+        border-radius: 12px;
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    .btn-contact {
+        background: var(--taupe);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-contact:hover {
+        background: var(--mocha);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="help-container">
+    <div class="help-header">
+        <h1 class="help-title">Help Center</h1>
+        <p class="help-subtitle">Find answers to your questions and get support</p>
+    </div>
+
+    <div class="search-section">
+        <input type="text" class="search-input" placeholder="Search for help...">
+        <p>Can't find what you're looking for? <a href="#contact">Contact support</a></p>
+    </div>
+
+    <div class="categories-grid">
+        <div class="category-card">
+            <div class="category-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <h3 class="category-title">Groups & Teams</h3>
+            <p class="category-desc">Learn about group management and collaboration</p>
+            <a href="#" class="btn-contact">Explore</a>
+        </div>
+
+        <div class="category-card">
+            <div class="category-icon">
+                <i class="bi bi-cloud-upload"></i>
+            </div>
+            <h3 class="category-title">Submissions</h3>
+            <p class="category-desc">Guide to submitting projects and assignments</p>
+            <a href="#" class="btn-contact">Explore</a>
+        </div>
+
+        <div class="category-card">
+            <div class="category-icon">
+                <i class="bi bi-journal-text"></i>
+            </div>
+            <h3 class="category-title">Projects</h3>
+            <p class="category-desc">Project management and guidelines</p>
+            <a href="#" class="btn-contact">Explore</a>
+        </div>
+    </div>
+
+    <div class="faq-section">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        
+        <div class="faq-item">
+            <h4 class="faq-question">How do I join a project group?</h4>
+            <p class="faq-answer">Teachers will assign you to groups. If you haven't been assigned to any group, please contact your teacher or administrator.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4 class="faq-question">What file formats are accepted for submissions?</h4>
+            <p class="faq-answer">We accept PDF, DOCX, ZIP, and most common image formats. Maximum file size is 25MB.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4 class="faq-question">How long does it take to get feedback?</h4>
+            <p class="faq-answer">Teachers typically provide feedback within 3-5 working days after submission.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4 class="faq-question">Can I resubmit my project?</h4>
+            <p class="faq-answer">Yes, you can resubmit if your previous submission was rejected or if you need to make improvements.</p>
+        </div>
+    </div>
+
+    <div class="contact-section" id="contact">
+        <h2 class="section-title">Need More Help?</h2>
+        <p>Our support team is here to help you with any questions or issues.</p>
+        <a href="mailto:support@projectreview.com" class="btn-contact">
+            <i class="bi bi-envelope"></i> Contact Support
+        </a>
+    </div>
+</div>
+{% endblock %}

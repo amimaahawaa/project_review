@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --danger-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    }
+
+    .delete-dialog {
+        max-width: 500px;
+        margin: 3rem auto;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px -10px rgba(255, 75, 43, 0.2);
+        border: none;
+        transition: var(--transition);
+    }
+
+    .delete-dialog:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 25px 50px -10px rgba(255, 75, 43, 0.25);
+    }
+
+    .delete-header {
+        background: var(--danger-gradient);
+        padding: 1.5rem 2rem;
+    }
+
+    .delete-icon {
+        font-size: 2.5rem;
+        margin-right: 1rem;
+        color: white;
+    }
+
+    .delete-body {
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .delete-title {
+        font-weight: 700;
+        color: #ff4b2b;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .delete-title:after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: var(--danger-gradient);
+        border-radius: 3px;
+    }
+
+    .topic-name {
+        font-weight: 600;
+        color: #343a40;
+        background: rgba(255, 75, 43, 0.05);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #ff4b2b;
+    }
+
+    .btn-delete {
+        background: var(--danger-gradient);
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-delete:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(255, 75, 43, 0.3);
+    }
+
+    .btn-delete:active {
+        transform: translateY(-1px);
+    }
+
+    .btn-cancel {
+        transition: var(--transition);
+    }
+
+    .btn-cancel:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 576px) {
+        .delete-dialog {
+            margin: 1.5rem;
+        }
+        
+        .delete-header {
+            padding: 1.25rem;
+        }
+        
+        .delete-body {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="delete-dialog">
+        <div class="delete-header text-white">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill delete-icon"></i>
+                <h2 class="mb-0">Confirm Deletion</h2>
+            </div>
+        </div>
+        <div class="delete-body">
+            <h4 class="delete-title">Warning: This action is permanent</h4>
+            <p class="mb-4">You are about to delete the following topic:</p>
+            
+            <div class="topic-name mb-4">
+                <i class="bi bi-journal-bookmark me-2"></i>
+                {{ object.title }}
+            </div>
+            
+            <p class="text-danger mb-4">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                This cannot be undone. All related data will be permanently removed.
+            </p>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'topics_list' %}" class="btn btn-outline-secondary btn-cancel">
+                        <i class="bi bi-arrow-left me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-delete">
+                        <i class="bi bi-trash-fill me-2"></i>Delete Permanently
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
