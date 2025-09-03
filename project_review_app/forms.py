@@ -8,62 +8,119 @@ User = get_user_model()
 
 
 # --------------------
-# Signup Form
+# Signup Form Students 
 # --------------------
-class SignUpForm(UserCreationForm):
-    email = forms.EmailField(required=True)
 
-    # Student-specific
-    division = forms.ChoiceField(choices=CustomUser.DIVISION_CHOICES, required=False)
-    roll_no = forms.CharField(required=False)
-    semester = forms.ChoiceField(choices=CustomUser.SEMESTER_CHOICES, required=False)
-
-    # Teacher-specific
-    department = forms.CharField(required=False)
-    subject = forms.CharField(required=False)
-
+class StudentSignUpForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = [
-            'username', 'email', 'password1', 'password2', 'role',
-            'division', 'roll_no', 'semester',
-            'department', 'subject'
-        ]
-
-    def clean(self):
-        cleaned = super().clean()
-        role = cleaned.get('role')
-
-        if role == 'student':
-            if not cleaned.get('division') or not cleaned.get('roll_no') or not cleaned.get('semester'):
-                raise forms.ValidationError("For students: Division, Roll No and Semester are required.")
-        elif role == 'teacher':
-            if not cleaned.get('department') or not cleaned.get('subject'):
-                raise forms.ValidationError("For teachers: Department and Subject are required.")
-        return cleaned
+        fields = (
+            "username",
+            "email",
+            "password1",
+            "password2",
+            "semester",
+            "division",
+            "roll_no",
+        )
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.role = self.cleaned_data.get('role', 'student')
+        # FORCE student role (POST me kuch bhi aaye, yahi set hoga)
+        user.role = "student"
+        # teacher-only fields kabhi mat chhedo
+        user.department = None
+        user.subject = None
+        if commit:
+            user.save()
+        return user
 
-        if user.role == 'student':
-            user.division = self.cleaned_data['division']
-            user.roll_no = self.cleaned_data['roll_no']
-            user.semester = self.cleaned_data['semester']
-            user.department = None
-            user.subject = None
-        else:
-            user.department = self.cleaned_data['department']
-            user.subject = self.cleaned_data['subject']
-            user.division = None
-            user.roll_no = None
-            user.semester = None
+    def clean(self):
+        cleaned = super().clean()
+        if not cleaned.get('division') or not cleaned.get('roll_no') or not cleaned.get('semester'):
+            raise forms.ValidationError("Division, Roll No and Semester are required.")
+        return cleaned
+
+
+# --------------------
+# Signup Form teachers 
+# --------------------
+class TeacherForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model = CustomUser
+        fields = ("username", "email", "department", "subject", "password")
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = "teacher"   # force teacher role
+        # student fields blank kar do
+        user.division = None
+        user.roll_no = None
+        user.semester = None
+        # password hash set karna zaroori hai
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
+    
+class AdminStudentForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model = CustomUser
+        fields = ("username", "email", "roll_no", "semester", "division", "password")
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = "student"
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
+
+
+class AdminForm(forms.ModelForm):
+    password = forms.CharField(
+        required=True,   # 👈 ab blank nahi chhod sakte
+        widget=forms.PasswordInput,
+        help_text="Enter a strong password."
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ["username", "email", "password"]
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        password = self.cleaned_data.get("password")
+
+        if password:
+            user.set_password(password)  # ✅ always hashed password save karega
+
+        # Force admin role + staff permission
+        user.role = "admin"
+        user.is_staff = True   
 
         if commit:
             user.save()
         return user
 
+
+
+# ---------- Teacher Edit Form (Admin ke liye edit/update) ----------
+class TeacherEditForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ("username", "email", "department", "subject")
+
+
+# ---------- Student Edit Form (Admin ke liye edit/update) ----------
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ("username", "email", "roll_no", "semester", "division")
 
 # --------------------
 # Auth Form (Login by Email)

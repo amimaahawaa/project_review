@@ -9,8 +9,29 @@ urlpatterns = [
 
     # auth
     path('login/', views.login_view, name='login'),
+    path("admin-login/", views.admin_login, name="admin_login"),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('signup/', views.signup_view, name='signup'),
+    path("admin-logout/", views.admin_logout, name="admin_logout"),
+    path('signup/', views.student_signup, name='signup'),
+
+
+    # admin dashboard
+    path('dashboard/', views.dashboard_view, name='dashboard'),
+    path("add-admin/", views.add_admin, name="add_admin"),
+    path("manage-admins/", views.manage_admins, name="manage_admins"),
+    path("edit-admin/<int:admin_id>/", views.edit_admin, name="edit_admin"),
+    path("delete-admin/<int:admin_id>/", views.delete_admin, name="delete_admin"),
+
+    #admin manage krega teachers ko
+    path("dashboard/add-teacher/", views.add_teacher, name="add_teacher"),
+    path("dashboard/manage-teachers/", views.manage_teachers, name="manage_teachers"),
+    path("dashboard/edit-teacher/<int:teacher_id>/", views.edit_teacher, name="edit_teacher"),
+    path("dashboard/delete-teacher/<int:teacher_id>/", views.delete_teacher, name="delete_teacher"),
+    #admin manage krega student ko
+    path("dashboard/manage-students/", views.manage_students, name="manage_students"),
+    path("dashboard/edit-student/<int:student_id>/", views.edit_student, name="edit_student"),
+    path("dashboard/delete-student/<int:student_id>/", views.delete_student, name="delete_student"),
+
 
     # teacher
     path('teacher-dashboard/', views.teacher_dashboard, name='teacher_dashboard'),

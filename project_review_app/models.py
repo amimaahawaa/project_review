@@ -10,6 +10,7 @@ class CustomUser(AbstractUser):
     ROLE_CHOICES = (
         ('teacher', 'Teacher'),
         ('student', 'Student'),
+        ('admin', 'Admin'),
     )
     
     @property
@@ -19,6 +20,12 @@ class CustomUser(AbstractUser):
     @property
     def is_student(self):
         return self.role == 'student'
+    
+    @property
+    def is_admin(self):   # ✅ new helper property
+        return self.role == 'admin'
+    
+    
     DIVISION_CHOICES = (
         ('A', 'Division A'),
         ('B', 'Division B'),

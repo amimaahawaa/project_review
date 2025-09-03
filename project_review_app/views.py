@@ -7,7 +7,6 @@ from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy, reverse
 from django.views.generic import DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
 from .models import *
 from .forms import *
 
@@ -25,24 +24,25 @@ def contact(request):
 # --------------------
 # Authentication
 # --------------------
-def signup_view(request):
+def student_signup(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        form = StudentSignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            user = authenticate(
-                request,
-                username=user.username,
-                password=form.cleaned_data['password1']
-            )
+            # auto-login (safe because we know the password just set)
+            user = authenticate(request, username=user.username, password=form.cleaned_data['password1'])
             if user:
                 login(request, user)
+                messages.success(request, "Welcome! Your student account is ready.")
                 return redirect('home')
-            messages.error(request, "Signup done but auto-login failed. Please login.")
+            messages.info(request, "Account created. Please login.")
             return redirect('login')
     else:
-        form = SignUpForm()
-    return render(request, 'signup.html', {'form': form})
+        form = StudentSignUpForm()
+    return render(request, 'signup.html', {'form': form, 'signup_title': 'Student Sign Up Only'})
 
 
 def login_view(request):
@@ -64,6 +64,154 @@ def login_view(request):
     else:
         form = EmailAuthenticationForm()
     return render(request, 'login.html', {'form': form})
+
+#admin dashboard
+
+@login_required(login_url="admin_login")
+def dashboard_view(request):
+    if not (request.user.is_superuser or request.user.role == "admin"):
+        return redirect("home")   # non-admin ko hata do
+
+    total_teachers = CustomUser.objects.filter(role="teacher").count()
+    total_students = CustomUser.objects.filter(role="student").count()
+    total_admins = CustomUser.objects.filter(role="admin").count()
+
+    return render(request, "admin/dashboard.html", {
+        "total_teachers": total_teachers,
+        "total_students": total_students,
+        "total_admins": total_admins,
+    })
+
+
+
+
+
+def admin_login(request):
+    form = AuthenticationForm(request, data=request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            user = form.get_user()
+            if user.is_superuser or user.role == "admin":
+                login(request, user)
+                return redirect("dashboard")
+            else:
+                form.add_error(None, "You are not authorized as admin.")
+    return render(request, "admin_login.html", {"form": form})
+
+
+
+
+def admin_logout(request):
+    logout(request)
+    return redirect("admin_login") 
+
+
+def manage_admins(request):
+    admins = CustomUser.objects.filter(role="admin")  # sirf admins dikhayenge
+    return render(request, "admin/manage_admins.html", {"admins": admins})
+
+def add_admin(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, "Email already exists.")
+        else:
+            user = CustomUser.objects.create_user(
+                email=email, username=username, password=password, role="admin"
+            )
+            messages.success(request, "Admin added successfully!")
+            return redirect("manage_admins")
+    return render(request, "admin/add_admin.html")
+
+def edit_admin(request, admin_id):
+    admin = get_object_or_404(CustomUser, id=admin_id)  # 👈 User ki jagah CustomUser lo
+    if request.method == "POST":
+        form = AdminForm(request.POST, instance=admin)
+        if form.is_valid():
+            form.save()
+            return redirect("manage_admins")
+    else:
+        form = AdminForm(instance=admin)
+    return render(request, "admin/edit_admin.html", {"form": form, "admin": admin})
+
+
+def delete_admin(request, admin_id):
+    admin = get_object_or_404(CustomUser, id=admin_id, role="admin")
+    
+    if request.method == "POST":
+        admin.delete()
+        messages.success(request, "Admin deleted successfully!")
+        return redirect("manage_admins")
+    
+    return render(request, "admin/delete_admin.html", {"admin": admin})
+
+# ---- TEACHERS CRUD ----
+def manage_teachers(request):
+    teachers = CustomUser.objects.filter(role="teacher")
+    return render(request, "admin/manage_teachers.html", {"teachers": teachers})
+
+
+
+def add_teacher(request):
+    if request.method == "POST":
+        form = TeacherForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Teacher added successfully!")
+            return redirect("admin_dashboard")
+    else:
+        form = TeacherForm()
+    return render(request, "admin/add_teacher.html", {"form": form})
+
+def edit_teacher(request, teacher_id):
+    teacher = get_object_or_404(CustomUser, id=teacher_id, role="teacher")
+    if request.method == "POST":
+        form = TeacherForm(request.POST, instance=teacher)
+        if form.is_valid():
+            form.save()
+            return redirect("manage_teachers")
+    else:
+        form = TeacherForm(instance=teacher)
+    return render(request, "admin/edit_teacher.html", {"form": form})
+
+
+def delete_teacher(request, teacher_id):
+    teacher = get_object_or_404(CustomUser, id=teacher_id, role="teacher")
+    if request.method == "POST":
+        teacher.delete()
+        return redirect("manage_teachers")
+    return render(request, "admin/confirm_delete.html", {"teacher": "teacher"})
+
+
+# ---- STUDENTS CRUD ----
+
+def manage_students(request):
+    students = CustomUser.objects.filter(role="student")
+    return render(request, "admin/manage_students.html", {"students": students})
+
+def edit_student(request, student_id):
+    student = get_object_or_404(CustomUser, id=student_id, role="student")
+    if request.method == "POST":
+        form = StudentForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Student updated successfully!")
+            return redirect("manage_students")
+    else:
+        form = StudentForm(instance=student)
+    return render(request, "admin/edit_student.html", {"form": form})
+
+
+def delete_student(request, student_id):
+    student = get_object_or_404(CustomUser, id=student_id, role="student")
+    if request.method == "POST":
+        student.delete()
+        messages.success(request, "Student deleted successfully!")
+        return redirect("manage_students")
+    return render(request, "admin/confirm_delete.html", {"object": student, "type": "Student"})
 
 
 def logout_view(request):

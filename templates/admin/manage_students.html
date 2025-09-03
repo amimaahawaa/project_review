@@ -1,0 +1,368 @@
+{% extends "base_admin.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .student-management-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 2rem;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--primary-light);
+    }
+    
+    .page-title {
+        color: var(--primary-dark);
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .page-title i {
+        color: var(--accent);
+        background: rgba(126, 91, 135, 0.1);
+        padding: 15px;
+        border-radius: 50%;
+    }
+    
+    .add-student-btn {
+        background: linear-gradient(to right, var(--primary), var(--primary-light));
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(126, 91, 135, 0.3);
+    }
+    
+    .add-student-btn:hover {
+        background: linear-gradient(to right, var(--primary-dark), var(--primary));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(126, 91, 135, 0.4);
+        color: white;
+    }
+    
+    .student-table-container {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        overflow-x: auto;
+    }
+    
+    .student-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+    }
+    
+    .student-table thead {
+        background: linear-gradient(to right, var(--primary), var(--primary-dark));
+        color: white;
+    }
+    
+    .student-table th {
+        padding: 1.2rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 1rem;
+        color: white;
+    }
+    
+    .student-table th i {
+        margin-right: 8px;
+        font-size: 0.9rem;
+    }
+    
+    .student-table td {
+        padding: 1.2rem 1rem;
+        border-bottom: 1px solid #f0f0f0;
+        color: var(--text-dark);
+    }
+    
+    .student-table tbody tr {
+        transition: all 0.3s ease;
+    }
+    
+    .student-table tbody tr:hover {
+        background-color: #f9f5f6;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .student-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 0.8rem;
+    }
+    
+    .btn-edit {
+        background: linear-gradient(to right, #ffc107, #ffab00);
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(255, 193, 7, 0.25);
+    }
+    
+    .btn-edit:hover {
+        background: linear-gradient(to right, #e0a800, #d39e00);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.35);
+    }
+    
+    .btn-delete {
+        background: linear-gradient(to right, #dc3545, #c82333);
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(220, 53, 69, 0.25);
+    }
+    
+    .btn-delete:hover {
+        background: linear-gradient(to right, #c82333, #bd2130);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.35);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-light);
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        color: var(--primary-light);
+        opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-dark);
+    }
+    
+    .empty-state p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .status-active {
+        background: rgba(39, 174, 96, 0.15);
+        color: #27ae60;
+    }
+    
+    .status-inactive {
+        background: rgba(108, 117, 125, 0.15);
+        color: #6c757d;
+    }
+    
+    /* Animation for table rows */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .student-table tbody tr {
+        animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    .student-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+    .student-table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+    .student-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+    .student-table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+    .student-table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+    
+    /* Responsive design */
+    @media (max-width: 1200px) {
+        .student-management-container {
+            padding: 1.5rem;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .student-management-container {
+            padding: 1rem;
+            margin: 1rem auto;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+        }
+        
+        .add-student-btn {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn-edit, .btn-delete {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .empty-state {
+            padding: 3rem 1rem;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .page-title {
+            font-size: 1.6rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+        
+        .page-title i {
+            padding: 12px;
+        }
+    }
+</style>
+
+<div class="student-management-container">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-user-graduate"></i> Manage Students
+        </h1>
+        
+    </div>
+
+    <!-- Students Table -->
+    <div class="student-table-container">
+        <table class="student-table">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-hashtag"></i> ID</th>
+                    <th><i class="fas fa-user"></i> Username</th>
+                    <th><i class="fas fa-envelope"></i> Email</th>
+                    <th><i class="fas fa-id-card"></i> Roll No</th>
+                    <th><i class="fas fa-graduation-cap"></i> Semester</th>
+                    <th><i class="fas fa-users"></i> Division</th>
+                    <th><i class="fas fa-cogs"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.id }}</td>
+                    <td>
+                        <strong>{{ student.username }}</strong>
+                    </td>
+                    <td>{{ student.email }}</td>
+                    <td>
+                        <span class="status-badge status-active">{{ student.roll_no }}</span>
+                    </td>
+                    <td>Semester {{ student.semester }}</td>
+                    <td>{{ student.division }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{% url 'edit_student' student.id %}" class="btn-edit">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'delete_student' student.id %}" class="btn-delete">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                
+               
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add hover effects to buttons
+        const buttons = document.querySelectorAll('.add-student-btn, .btn-edit, .btn-delete');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        
+        });
+  
+</script>
+{% endblock %}

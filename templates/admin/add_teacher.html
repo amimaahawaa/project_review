@@ -1,0 +1,365 @@
+{% block content %}
+<style>
+    /* Custom CSS for the enhanced teacher form */
+    :root {
+        --primary: #7e5b87;
+        --primary-light: #a38faa;
+        --secondary: #f5e3e6;
+        --accent: #ff7e5f;
+        --dark: #4a4a4a;
+        --light: #ffffff;
+    }
+    
+    .teacher-form-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f9f5f6 0%, #edf2f7 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .teacher-form-container {
+        width: 100%;
+        max-width: 700px;
+        background: var(--light);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        display: flex;
+    }
+    
+    .form-decoration {
+        width: 40%;
+        background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .decoration-circle {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .circle-1 {
+        width: 200px;
+        height: 200px;
+        top: -50px;
+        left: -50px;
+    }
+    
+    .circle-2 {
+        width: 150px;
+        height: 150px;
+        bottom: -30px;
+        right: -30px;
+    }
+    
+    .decoration-content {
+        text-align: center;
+        z-index: 2;
+    }
+    
+    .decoration-content i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .decoration-content h3 {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        font-size: 1.5rem;
+    }
+    
+    .decoration-content p {
+        opacity: 0.9;
+        font-size: 0.9rem;
+    }
+    
+    .form-content {
+        width: 60%;
+        padding: 2.5rem;
+    }
+    
+    .teacher-form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: var(--dark);
+    }
+    
+    .teacher-form-header h2 {
+        font-weight: 700;
+        font-size: 28px;
+        margin-bottom: 0.5rem;
+        color: var(--primary);
+        position: relative;
+        display: inline-block;
+    }
+    
+    .teacher-form-header h2:after {
+        content: '';
+        display: block;
+        width: 50px;
+        height: 3px;
+        background: var(--accent);
+        margin: 10px auto;
+        border-radius: 2px;
+    }
+    
+    .teacher-form-header p {
+        color: #777;
+        font-size: 1rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #5a5a5a;
+        font-size: 0.9rem;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 14px 15px;
+        border: 2px solid #e2e2e2;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        background-color: #fff;
+        box-shadow: 0 0 0 3px rgba(126, 91, 135, 0.1);
+    }
+    
+    .form-icon {
+        position: absolute;
+        right: 15px;
+        top: 38px;
+        color: var(--primary);
+    }
+    
+    .input-container {
+        position: relative;
+    }
+    
+    .text-danger {
+        color: #e74c3c;
+        font-size: 13px;
+        margin-top: 5px;
+        display: block;
+        font-weight: 500;
+    }
+    
+    .btn-teacher {
+        background: linear-gradient(to right, var(--primary), var(--primary-light));
+        color: white;
+        border: none;
+        padding: 16px 20px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(126, 91, 135, 0.3);
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-teacher:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: 0.5s;
+    }
+    
+    .btn-teacher:hover:before {
+        left: 100%;
+    }
+    
+    .btn-teacher:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(126, 91, 135, 0.4);
+    }
+    
+    .form-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: #777;
+    }
+    
+    .form-footer a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s;
+    }
+    
+    .form-footer a:hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+    
+    /* Animation for form elements */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .form-group {
+        animation: fadeIn 0.5s ease forwards;
+    }
+    
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+    .form-group:nth-child(4) { animation-delay: 0.4s; }
+    .form-group:nth-child(5) { animation-delay: 0.5s; }
+    
+    /* Responsive design */
+    @media (max-width: 900px) {
+        .teacher-form-container {
+            flex-direction: column;
+        }
+        
+        .form-decoration, .form-content {
+            width: 100%;
+        }
+        
+        .form-decoration {
+            padding: 1.5rem;
+        }
+        
+        .decoration-content i {
+            font-size: 3rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .teacher-form-wrapper {
+            padding: 1rem;
+        }
+        
+        .form-content {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<div class="teacher-form-wrapper">
+    <div class="teacher-form-container">
+        <div class="form-decoration">
+            <div class="decoration-circle circle-1"></div>
+            <div class="decoration-circle circle-2"></div>
+            <div class="decoration-content">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h3>Add to Our Team</h3>
+                <p>Expand our educational family by adding a qualified teacher to our institution</p>
+            </div>
+        </div>
+        
+        <div class="form-content">
+            <div class="teacher-form-header">
+                <h2>Add New Teacher</h2>
+                <p>Enter the details below to register a teacher</p>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                {{ form.non_field_errors }}
+                
+                {% for field in form %}
+                <div class="form-group">
+                    <label class="form-label">{{ field.label }}</label>
+                    <div class="input-container">
+                        {{ field }}
+                        {% if field.name == "first_name" %}
+                        <i class="fas fa-user form-icon"></i>
+                        {% elif field.name == "last_name" %}
+                        <i class="fas fa-user-tag form-icon"></i>
+                        {% elif field.name == "email" %}
+                        <i class="fas fa-envelope form-icon"></i>
+                        {% elif field.name == "phone" %}
+                        <i class="fas fa-phone form-icon"></i>
+                        {% elif field.name == "subject" %}
+                        <i class="fas fa-book form-icon"></i>
+                        {% elif field.name == "address" %}
+                        <i class="fas fa-map-marker-alt form-icon"></i>
+                        {% endif %}
+                    </div>
+                    {% for error in field.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                
+                <button type="submit" class="btn-teacher">
+                    <i class="fas fa-plus-circle"></i> Add Teacher
+                </button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Back to <a href="{% url 'manage_teachers' %}">Teacher List</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add classes to form inputs and enhance with animations
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.classList.add('form-control');
+            
+            // Add focus effects
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                if (this.value === '') {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+        });
+        
+        // Add animation to button
+        const button = document.querySelector('.btn-teacher');
+        button.addEventListener('mouseover', function() {
+            this.style.transform = 'translateY(-3px)';
+        });
+        
+        button.addEventListener('mouseout', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+{% endblock %}

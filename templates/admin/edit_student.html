@@ -1,0 +1,271 @@
+{% extends "base_admin.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-dark: #5d3c6b;
+        --primary: #7e5b87;
+        --primary-light: #a38faa;
+        --secondary: #f5e3e6;
+        --accent: #ff7e5f;
+        --light: #ffffff;
+        --dark: #4a4a4a;
+        --light-bg: #f9f5f6;
+        --card-dark: #6a4a73;
+        --card-light: #f0e6f5;
+        --success: #27ae60;
+        --warning: #f39c12;
+        --danger: #e74c3c;
+        --info: #3498db;
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    body {
+        background: linear-gradient(135deg, var(--light-bg) 0%, #edf2f7 100%);
+        padding: 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--dark);
+        min-height: 100vh;
+    }
+
+    .student-form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: var(--light);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(93, 60, 107, 0.1), 0 8px 16px rgba(93, 60, 107, 0.05);
+        overflow: hidden;
+        border: 1px solid rgba(126, 91, 135, 0.15);
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+        padding: 30px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        transform: rotate(30deg);
+    }
+
+    .form-header h2 {
+        position: relative;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .form-header p {
+        position: relative;
+        opacity: 0.9;
+        margin-bottom: 0;
+    }
+
+    .form-body {
+        padding: 40px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        position: relative;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    /* Animation delays for form groups */
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+    .form-group:nth-child(4) { animation-delay: 0.4s; }
+    .form-group:nth-child(5) { animation-delay: 0.5s; }
+    .form-group:nth-child(6) { animation-delay: 0.6s; }
+    .form-group:nth-child(7) { animation-delay: 0.7s; }
+
+    label {
+        font-weight: 600;
+        color: var(--primary-dark);
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    input.form-control, select.form-control {
+        width: 100%;
+        padding: 15px 20px;
+        border: 2px solid var(--secondary);
+        border-radius: 12px;
+        font-size: 16px;
+        background: var(--light);
+        transition: var(--transition);
+        color: var(--dark);
+    }
+
+    input.form-control:focus, select.form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: var(--light);
+        box-shadow: 0 0 0 4px rgba(126, 91, 135, 0.2);
+    }
+
+    .btn-container {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    button.btn-save {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(126, 91, 135, 0.25);
+        cursor: pointer;
+    }
+
+    button.btn-save:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(126, 91, 135, 0.35);
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    }
+
+    a.btn-cancel {
+        background: white;
+        color: var(--primary);
+        border: 2px solid var(--primary-light);
+        padding: 14px 30px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        justify-content: center;
+    }
+
+    a.btn-cancel:hover {
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        border-color: var(--primary);
+    }
+
+    .error-message {
+        color: var(--danger);
+        font-size: 0.9rem;
+        margin-top: 5px;
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .student-form-container {
+            margin: 20px auto;
+            border-radius: 16px;
+        }
+        .form-body {
+            padding: 30px 25px;
+        }
+        .form-header {
+            padding: 25px;
+        }
+        .btn-container {
+            flex-direction: column;
+        }
+        button.btn-save, a.btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="student-form-container">
+    <div class="form-header">
+        <h2><i class="fas fa-user-graduate"></i> Edit Student Profile</h2>
+        <p>Update the student's information in the system</p>
+    </div>
+
+    <div class="form-body">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {% if field.name == 'username' %}
+                            <i class="fas fa-user"></i>
+                        {% elif field.name == 'email' %}
+                            <i class="fas fa-envelope"></i>
+                        {% elif field.name == 'roll_no' %}
+                            <i class="fas fa-id-card"></i>
+                        {% elif field.name == 'semester' %}
+                            <i class="fas fa-calendar-alt"></i>
+                        {% elif field.name == 'division' %}
+                            <i class="fas fa-users"></i>
+                        {% else %}
+                            <i class="fas fa-pen"></i>
+                        {% endif %}
+                        {{ field.label }}
+                    </label>
+                    {{ field|add_class:"form-control" }}
+                    {% if field.errors %}
+                        <span class="error-message">{{ field.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="btn-container">
+                <button type="submit" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                <a href="{% url 'manage_students' %}" class="btn-cancel"><i class="fas fa-times"></i> Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const formControls = document.querySelectorAll('.form-control');
+        formControls.forEach(control => {
+            control.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            control.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+
+        const saveBtn = document.querySelector('.btn-save');
+        saveBtn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px)';
+        });
+        saveBtn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+{% endblock %}

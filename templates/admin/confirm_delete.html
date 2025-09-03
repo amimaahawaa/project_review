@@ -1,0 +1,180 @@
+{% extends "base_admin.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-dark: #5d3c6b;
+        --primary: #7e5b87;
+        --primary-light: #a38faa;
+        --secondary: #f5e3e6;
+        --accent: #ff7e5f;
+        --light: #ffffff;
+        --dark: #4a4a4a;
+        --light-bg: #f9f5f6;
+        --card-dark: #6a4a73;
+        --card-light: #f0e6f5;
+        --success: #27ae60;
+        --warning: #f39c12;
+        --danger: #e74c3c;
+        --info: #3498db;
+    }
+    
+    .delete-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: var(--light);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        border: 1px solid rgba(126, 91, 135, 0.15);
+    }
+    
+    .delete-header {
+        margin-bottom: 2rem;
+        color: var(--primary-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .delete-header i {
+        font-size: 2.5rem;
+        color: var(--danger);
+        background: rgba(231, 76, 60, 0.1);
+        padding: 15px;
+        border-radius: 50%;
+    }
+    
+    .delete-message {
+        font-size: 1.2rem;
+        color: var(--primary-dark);
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: rgba(231, 76, 60, 0.05);
+        border-radius: 15px;
+        border-left: 4px solid var(--danger);
+    }
+    
+    .delete-object {
+        font-weight: 700;
+        color: var(--danger);
+        background: rgba(231, 76, 60, 0.1);
+        padding: 5px 15px;
+        border-radius: 10px;
+        display: inline-block;
+        margin: 0 5px;
+    }
+    
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+    
+    .btn-delete {
+        padding: 12px 25px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(to right, var(--danger), #c0392b);
+        color: white;
+        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+    }
+    
+    .btn-delete:hover {
+        background: linear-gradient(to right, #c0392b, var(--danger));
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(231, 76, 60, 0.4);
+    }
+    
+    .btn-cancel {
+        padding: 12px 25px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 1rem;
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        box-shadow: 0 3px 10px rgba(126, 91, 135, 0.1);
+    }
+    
+    .btn-cancel:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(126, 91, 135, 0.3);
+    }
+    
+    .warning-note {
+        margin-top: 2rem;
+        padding: 1rem;
+        background: rgba(243, 156, 18, 0.1);
+        border-radius: 10px;
+        border-left: 4px solid var(--warning);
+        color: var(--primary-dark);
+        font-size: 0.9rem;
+    }
+    
+    @media (max-width: 640px) {
+        .delete-container {
+            padding: 1.5rem;
+            margin: 1rem;
+        }
+        
+        .button-group {
+            flex-direction: column;
+        }
+        
+        .btn-delete, .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="delete-container">
+    <div class="delete-header">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h2>Confirm Deletion</h2>
+    </div>
+    
+    <div class="delete-message">
+        <p>Do you really want to delete ?</p>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="button-group">
+            <button type="submit" class="btn-delete">
+                <i class="fas fa-trash"></i> Yes, delete
+            </button>
+            <a href="{% url 'manage_teachers' %}" class="btn-cancel">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+    
+    <div class="warning-note">
+        <p><i class="fas fa-info-circle"></i> This action cannot be undone. All data associated with this record will be permanently deleted.</p>
+    </div>
+</div>
+
+
+{% endblock %}

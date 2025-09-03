@@ -1,0 +1,967 @@
+{% extends "base_admin.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-dark: #5d3c6b;
+        --primary: #7e5b87;
+        --primary-light: #a38faa;
+        --secondary: #f5e3e6;
+        --accent: #ff7e5f;
+        --light: #ffffff;
+        --dark: #4a4a4a;
+        --light-bg: #f9f5f6;
+        --card-dark: #6a4a73;
+        --card-light: #f0e6f5;
+        --success: #27ae60;
+        --warning: #f39c12;
+        --danger: #e74c3c;
+        --info: #3498db;
+    }
+    
+    body {
+        background: linear-gradient(135deg, var(--light-bg) 0%, #edf2f7 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+    
+    .dashboard-container {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .dashboard-header {
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+    }
+    
+    .dashboard-header h2 {
+        font-weight: 800;
+        color: var(--primary-dark);
+        font-size: 2.8rem;
+        margin-bottom: 0.5rem;
+        position: relative;
+        display: inline-block;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .dashboard-header h2:after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 5px;
+        background: var(--accent);
+        margin: 15px auto;
+        border-radius: 3px;
+        box-shadow: 0 2px 8px rgba(255, 126, 95, 0.3);
+    }
+    
+    .dashboard-header p {
+        color: var(--primary);
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto;
+        font-weight: 500;
+        background: rgba(126, 91, 135, 0.1);
+        padding: 0.8rem 1.5rem;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .welcome-message {
+        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+        color: white;
+        padding: 1.8rem;
+        border-radius: 20px;
+        margin-bottom: 2.5rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .welcome-message:before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: pulse 4s infinite;
+    }
+    
+    .welcome-text {
+        flex: 1;
+        text-align: left;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .welcome-message h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .welcome-message p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+    
+    .welcome-stats {
+        display: flex;
+        gap: 2rem;
+        position: relative;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 1rem 1.5rem;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 0 1rem;
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .stat-item:last-child {
+        border-right: none;
+    }
+    
+    .stat-item .number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        display: block;
+        line-height: 1;
+        margin-bottom: 0.3rem;
+    }
+    
+    .stat-item .label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+    
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, var(--light) 0%, var(--card-light) 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(126, 91, 135, 0.15);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+    }
+    
+    .stat-card:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 6px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+        box-shadow: 2px 0 8px rgba(126, 91, 135, 0.3);
+    }
+    
+    .stat-card:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+        border-radius: 0 0 0 100px;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-card.students-card {
+        background: linear-gradient(135deg, #f0e6f5 0%, #e6d4f0 100%);
+    }
+    
+    .stat-card.teachers-card {
+        background: linear-gradient(135deg, #f5e3e6 0%, #f0d4e6 100%);
+    }
+    
+    .stat-card.admins-card {
+        background: linear-gradient(135deg, #ffe3e3 0%, #f9dada 100%);
+    }
+    
+    .card-icon {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        font-size: 2.8rem;
+        opacity: 0.15;
+        color: var(--primary-dark);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover .card-icon {
+        opacity: 0.25;
+        transform: scale(1.1) rotate(5deg);
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin-bottom: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .card-title i {
+        font-size: 1.4rem;
+        color: var(--primary);
+        background: rgba(126, 91, 135, 0.1);
+        padding: 10px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover .card-title i {
+        transform: rotate(15deg);
+        background: rgba(126, 91, 135, 0.2);
+    }
+    
+    .stat-value {
+        font-size: 3.2rem;
+        font-weight: 800;
+        color: var(--primary-dark);
+        margin: 1rem 0;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+    
+    .stat-value:after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 3px;
+        background: var(--accent);
+        border-radius: 2px;
+        opacity: 0.7;
+    }
+    
+    .stat-change {
+        text-align: center;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+    
+    .change-positive {
+        color: var(--success);
+    }
+    
+    .change-negative {
+        color: var(--danger);
+    }
+    
+    .card-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1.8rem;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .dashboard-btn {
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .dashboard-btn:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: 0.5s;
+    }
+    
+    .dashboard-btn:hover:before {
+        left: 100%;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(to right, var(--primary), var(--primary-light));
+        color: white;
+        border: none;
+        box-shadow: 0 5px 15px rgba(126, 91, 135, 0.3);
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(to right, var(--primary-dark), var(--primary));
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(126, 91, 135, 0.4);
+    }
+    
+    .btn-outline-primary {
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        box-shadow: 0 3px 10px rgba(126, 91, 135, 0.1);
+    }
+    
+    .btn-outline-primary:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(126, 91, 135, 0.3);
+    }
+    
+    .quick-actions-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .quick-actions-card {
+        background: linear-gradient(135deg, var(--light) 0%, var(--card-light) 100%);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(126, 91, 135, 0.15);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .quick-actions-card:after {
+        content: '';
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+        border-radius: 50%;
+    }
+    
+    .quick-actions-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        gap: 15px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .quick-actions-header h5 {
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    
+    .quick-actions-header i {
+        color: var(--accent);
+        font-size: 2.2rem;
+        background: rgba(255, 126, 95, 0.1);
+        padding: 15px;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .quick-actions-card:hover .quick-actions-header i {
+        transform: rotate(15deg) scale(1.1);
+    }
+    
+    .action-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .action-btn {
+        padding: 16px 22px;
+        border-radius: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: white;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .action-btn:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: 0.5s;
+    }
+    
+    .action-btn:hover:before {
+        left: 100%;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .action-btn.students {
+        background: linear-gradient(to right, #7e5b87, #9b7aa9);
+    }
+    
+    .action-btn.teachers {
+        background: linear-gradient(to right, #5d3c6b, #7e5b87);
+    }
+    
+    .action-btn.admins {
+        background: linear-gradient(to right, #e74c3c, #c0392b);
+    }
+    
+    .action-btn.add {
+        background: linear-gradient(to right, var(--accent), #ff9a80);
+    }
+    
+    .action-btn.reports {
+        background: linear-gradient(to right, #3498db, #2980b9);
+    }
+    
+    .recent-activity {
+        background: linear-gradient(135deg, var(--light) 0%, var(--card-light) 100%);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(126, 91, 135, 0.15);
+        backdrop-filter: blur(10px);
+        margin-top: 2.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .recent-activity:after {
+        content: '';
+        position: absolute;
+        bottom: -30px;
+        left: -30px;
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+        border-radius: 50%;
+    }
+    
+    .recent-activity-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        gap: 15px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .recent-activity-header h5 {
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    
+    .recent-activity-header i {
+        color: var(--info);
+        font-size: 2.2rem;
+        background: rgba(52, 152, 219, 0.1);
+        padding: 15px;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .recent-activity:hover .recent-activity-header i {
+        transform: rotate(-15deg) scale(1.1);
+    }
+    
+    .activity-list {
+        list-style: none;
+        padding: 0;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(126, 91, 135, 0.1);
+        gap: 18px;
+        transition: all 0.3s ease;
+    }
+    
+    .activity-item:hover {
+        background: rgba(126, 91, 135, 0.05);
+        transform: translateX(10px);
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .activity-item:hover .activity-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+    
+    .activity-icon.add {
+        background: rgba(39, 174, 96, 0.15);
+        color: var(--success);
+    }
+    
+    .activity-icon.edit {
+        background: rgba(241, 196, 15, 0.15);
+        color: var(--warning);
+    }
+    
+    .activity-icon.delete {
+        background: rgba(231, 76, 60, 0.15);
+        color: var(--danger);
+    }
+    
+    .activity-content {
+        flex: 1;
+    }
+    
+    .activity-content h6 {
+        margin: 0 0 8px 0;
+        color: var(--primary-dark);
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .activity-content p {
+        margin: 0;
+        color: var(--text-light);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    .activity-time {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        white-space: nowrap;
+        background: rgba(126, 91, 135, 0.1);
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-weight: 500;
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(0.5); opacity: 0; }
+        50% { opacity: 0.5; }
+        100% { transform: scale(1.5); opacity: 0; }
+    }
+    
+    .stat-card {
+        animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    
+    .quick-actions-card {
+        animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        animation-delay: 0.4s;
+    }
+    
+    .recent-activity {
+        animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        animation-delay: 0.5s;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 1200px) {
+        .quick-actions-section {
+            grid-template-columns: 1fr;
+        }
+        
+        .welcome-stats {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .stat-item {
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+    }
+    
+    @media (max-width: 968px) {
+        .dashboard-container {
+            padding: 1.5rem;
+        }
+        
+        .stats-cards {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-buttons {
+            grid-template-columns: 1fr;
+        }
+        
+        .dashboard-header h2 {
+            font-size: 2.3rem;
+        }
+        
+        .welcome-message {
+            flex-direction: column;
+            text-align: center;
+            gap: 1.5rem;
+        }
+        
+        .welcome-text {
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .dashboard-container {
+            padding: 1rem;
+        }
+        
+        .quick-actions-card,
+        .recent-activity {
+            padding: 2rem 1.5rem;
+        }
+        
+        .stat-card {
+            padding: 1.8rem;
+        }
+        
+        .dashboard-header h2 {
+            font-size: 2rem;
+        }
+        
+        .stat-value {
+            font-size: 2.8rem;
+        }
+        
+        .activity-item {
+            flex-direction: column;
+            text-align: center;
+            gap: 12px;
+        }
+        
+        .activity-time {
+            align-self: center;
+        }
+        
+        .welcome-stats {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .stat-item {
+            padding: 0.5rem;
+        }
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h2>Admin Dashboard</h2>
+        <p>Welcome to the Project Review Management System Admin Panel 🚀</p>
+    </div>
+
+    <div class="welcome-message">
+        <div class="welcome-text">
+            <h3><i class="fas fa-rocket"></i> Welcome back, Administrator!</h3>
+            <p>Manage your system efficiently with all the tools at your fingertips</p>
+        </div>
+        <div class="welcome-stats">
+            <div class="stat-item">
+                <span class="number">{{ total_students }}</span>
+                <span class="label">Students</span>
+            </div>
+            <div class="stat-item">
+                <span class="number">{{ total_teachers }}</span>
+                <span class="label">Teachers</span>
+            </div>
+            <div class="stat-item">
+                <span class="number">{{ total_admins }}</span>
+                <span class="label">Admins</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-cards">
+        <div class="stat-card students-card">
+            <i class="fas fa-user-graduate card-icon"></i>
+            <div class="card-title">
+                <i class="fas fa-user-graduate"></i> Total Students
+            </div>
+            <div class="stat-value">{{ total_students }}</div>
+            <div class="stat-change change-positive">
+                <i class="fas fa-arrow-up"></i> +12% from last month
+            </div>
+            <div class="card-actions">
+                <a href="{% url 'manage_students' %}" class="dashboard-btn btn-outline-primary">
+                    <i class="fas fa-cog"></i> Manage Students
+                </a>
+            </div>
+        </div>
+
+        <div class="stat-card teachers-card">
+            <i class="fas fa-chalkboard-teacher card-icon"></i>
+            <div class="card-title">
+                <i class="fas fa-chalkboard-teacher"></i> Total Teachers
+            </div>
+            <div class="stat-value">{{ total_teachers }}</div>
+            <div class="stat-change change-positive">
+                <i class="fas fa-arrow-up"></i> +8% from last month
+            </div>
+            <div class="card-actions">
+                <a href="{% url 'manage_teachers' %}" class="dashboard-btn btn-outline-primary">
+                    <i class="fas fa-cog"></i> Manage Teachers
+                </a>
+                <a href="{% url 'add_teacher' %}" class="dashboard-btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Teacher
+                </a>
+            </div>
+        </div>
+
+        <div class="stat-card admins-card">
+            <i class="fas fa-user-shield card-icon"></i>
+            <div class="card-title">
+                <i class="fas fa-user-shield"></i> Total Admins
+            </div>
+            <div class="stat-value">{{ total_admins }}</div>
+            <div class="stat-change change-positive">
+                <i class="fas fa-arrow-up"></i> +3% from last month
+            </div>
+            <div class="card-actions">
+                <a href="{% url 'manage_admins' %}" class="dashboard-btn btn-outline-primary">
+                    <i class="fas fa-cog"></i> Manage Admins
+                </a>
+                <a href="{% url 'add_admin' %}" class="dashboard-btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Admin
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="quick-actions-section">
+        <div class="quick-actions-card">
+            <div class="quick-actions-header">
+                <i class="fas fa-bolt"></i>
+                <h5>Quick Actions</h5>
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'manage_students' %}" class="action-btn students">
+                    <i class="fas fa-user-graduate"></i> View Students
+                </a>
+                <a href="{% url 'manage_teachers' %}" class="action-btn teachers">
+                    <i class="fas fa-chalkboard-teacher"></i> View Teachers
+                </a>
+                <a href="{% url 'manage_admins' %}" class="action-btn admins">
+                    <i class="fas fa-user-shield"></i> View Admins
+                </a>
+                <a href="{% url 'add_teacher' %}" class="action-btn add">
+                    <i class="fas fa-plus"></i> Add Teacher
+                </a>
+                <a href="{% url 'add_admin' %}" class="action-btn add" style="background: linear-gradient(to right, #ff6b6b, #ff4757);">
+                    <i class="fas fa-plus"></i> Add Admin
+                </a>
+                <a href="#" class="action-btn reports">
+                    <i class="fas fa-chart-bar"></i> Generate Reports
+                </a>
+            </div>
+        </div>
+
+        <div class="recent-activity">
+            <div class="recent-activity-header">
+                <i class="fas fa-history"></i>
+                <h5>Recent Activity</h5>
+            </div>
+            <ul class="activity-list">
+                <li class="activity-item">
+                    <div class="activity-icon add">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h6>New Teacher Added</h6>
+                        <p>Dr. Sarah Johnson joined the Mathematics department</p>
+                    </div>
+                    <div class="activity-time">2 hours ago</div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon edit">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h6>Student Record Updated</h6>
+                        <p>John Doe's contact information was modified</p>
+                    </div>
+                    <div class="activity-time">5 hours ago</div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon delete">
+                        <i class="fas fa-trash"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h6>Admin Account Removed</h6>
+                        <p>Former admin account was deactivated</p>
+                    </div>
+                    <div class="activity-time">1 day ago</div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon add">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h6>New Course Created</h6>
+                        <p>Advanced Python Programming course added</p>
+                    </div>
+                    <div class="activity-time">2 days ago</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add interactive effects
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add hover effects to cards
+        const cards = document.querySelectorAll('.stat-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+                this.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.15)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.1)';
+            });
+        });
+        
+        // Add hover effects to action buttons
+        const actionButtons = document.querySelectorAll('.action-btn, .dashboard-btn');
+        actionButtons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px) scale(1.03)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Add ripple effect to buttons
+        const buttons = document.querySelectorAll('.dashboard-btn, .action-btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const x = e.clientX - e.target.getBoundingClientRect().left;
+                const y = e.clientY - e.target.getBoundingClientRect().top;
+                
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple-effect');
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    });
+</script>
+{% endblock %}

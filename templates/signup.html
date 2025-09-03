@@ -1,255 +1,457 @@
-{% block title %}
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration | Academic Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --ivory: #FFFFF5;
+            --linen: #F5F0E6;
+            --peach: #F8D8B8;
+            --taupe: #A89B8C;
+            --mocha: #7A6B5E;
+            --umber: #5A4D42;
+            --slate: #6C7A89;
+            --charcoal: #2A2E35;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
 
-{% block extra_css %}
-<style>
-  /* Enhanced Nude Color Palette */
-  :root {
-    --ivory: #FFFFF0;
-    --linen: #FAF0E6;
-    --peach: #FFE5B4;
-    --taupe: #8B7D6B;
-    --mocha: #6F4E37;
-    --umber: #635147;
-    --slate: #708090;
-    --charcoal: #36454F;
-  }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
 
-  body {
-    background-color: var(--ivory);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
+        body {
+            background: linear-gradient(135deg, var(--ivory) 0%, var(--linen) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--charcoal);
+        }
 
-  body::before {
-    content: "";
-    background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-    background-size: cover;
-    background-position: center;
-    opacity: 0.08;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-  }
+        .registration-card {
+            background: white;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            box-shadow: 
+                0 25px 50px -12px rgba(90, 77, 66, 0.15),
+                0 8px 24px -4px rgba(90, 77, 66, 0.1);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
 
-  .signup-card {
-    background-color: var(--linen);
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    max-width: 520px;
-    width: 100%;
-    margin: 2rem auto;
-    padding: 2.5rem;
-    border-top: 5px solid var(--peach);
-    animation: fadeIn 0.8s ease-out;
-  }
+        .card-header {
+            background: linear-gradient(135deg, var(--taupe) 0%, var(--mocha) 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
 
-  .signup-title {
-    color: var(--mocha);
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 1.8rem;
-    position: relative;
-  }
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+        }
 
-  .signup-title::after {
-    content: "";
-    display: block;
-    width: 80px;
-    height: 3px;
-    background: var(--taupe);
-    margin: 1rem auto;
-  }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
 
-  .form-group {
-    margin-bottom: 1.2rem;
-  }
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--taupe);
+            margin-right: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
 
-  label {
-    color: var(--umber);
-    font-weight: 500;
-    margin-bottom: 0.4rem;
-    display: block;
-  }
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
 
-  input, select {
-    background-color: var(--ivory);
-    border: 1px solid var(--taupe);
-    border-radius: 6px;
-    padding: 0.75rem 1rem;
-    width: 100%;
-    transition: all 0.3s;
-  }
+        .card-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
 
-  input:focus, select:focus {
-    border-color: var(--mocha);
-    box-shadow: 0 0 0 3px rgba(139, 125, 107, 0.2);
-    outline: none;
-  }
+        .card-header p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
 
-  .error-message {
-    color: #dc3545;
-    font-size: 0.85rem;
-    margin-top: 0.3rem;
-  }
+        .card-body {
+            padding: 35px;
+        }
 
-  .btn-signup {
-    background-color: var(--taupe);
-    color: white;
-    border: none;
-    padding: 0.75rem;
-    border-radius: 6px;
-    font-weight: 600;
-    width: 100%;
-    transition: all 0.3s;
-    margin-top: 1.5rem;
-  }
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
 
-  .btn-signup:hover {
-    background-color: var(--umber);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--mocha);
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
 
-  .login-link {
-    text-align: center;
-    margin-top: 1.5rem;
-    color: var(--slate);
-  }
+        .form-label i {
+            margin-right: 10px;
+            color: var(--taupe);
+        }
 
-  .login-link a {
-    color: var(--taupe);
-    font-weight: 500;
-    text-decoration: none;
-    transition: color 0.3s;
-  }
+        .form-control {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--linen);
+            border-radius: 12px;
+            background: var(--ivory);
+            font-size: 16px;
+            transition: var(--transition);
+            color: var(--charcoal);
+        }
 
-  .login-link a:hover {
-    color: var(--mocha);
-    text-decoration: underline;
-  }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--taupe);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(168, 155, 140, 0.2);
+        }
 
-  /* Role-specific fields */
-  .student-only, .teacher-only {
-    transition: all 0.3s ease;
-  }
+        .password-hint {
+            font-size: 13px;
+            color: var(--mocha);
+            margin-top: 6px;
+            padding-left: 12px;
+            border-left: 2px solid var(--peach);
+        }
 
-  /* Animation */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+        .btn-signup {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--taupe) 0%, var(--mocha) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(90, 77, 66, 0.25);
+        }
 
-  /* Responsive */
-  @media (max-width: 576px) {
-    .signup-card {
-      padding: 1.5rem;
-      margin: 1rem;
-    }
-    
-    .row.g-2 > [class^="col-"] {
-      padding-bottom: 0.5rem;
-    }
-  }
-</style>
-{% endblock %}
+        .btn-signup:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(90, 77, 66, 0.35);
+        }
 
-{% block content %}
-<div class="signup-card">
-  <h3 class="signup-title">Create Account</h3>
-  <form method="post">{% csrf_token %}
-    {{ form.non_field_errors }}
-    <div class="row g-2">
-      <div class="col-12 form-group">
-        {{ form.username.label_tag }}
-        {{ form.username }}
-        {% if form.username.errors %}
-          <div class="error-message">{{ form.username.errors }}</div>
-        {% endif %}
-      </div>
-      
-      <div class="col-12 form-group">
-        {{ form.email.label_tag }}
-        {{ form.email }}
-        {% if form.email.errors %}
-          <div class="error-message">{{ form.email.errors }}</div>
-        {% endif %}
-      </div>
-      
-      <div class="col-12 form-group">
-        {{ form.role.label_tag }}
-        {{ form.role }}
-      </div>
+        .btn-signup:active {
+            transform: translateY(-1px);
+        }
 
-      <div class="col-md-6 form-group">
-        {{ form.password1.label_tag }}
-        {{ form.password1 }}
-        {% if form.password1.errors %}
-          <div class="error-message">{{ form.password1.errors }}</div>
-        {% endif %}
-      </div>
-      
-      <div class="col-md-6 form-group">
-        {{ form.password2.label_tag }}
-        {{ form.password2 }}
-        {% if form.password2.errors %}
-          <div class="error-message">{{ form.password2.errors }}</div>
-        {% endif %}
-      </div>
+        .divider {
+            text-align: center;
+            margin: 28px 0;
+            position: relative;
+        }
 
-      <!-- student fields -->
-      <div class="col-md-4 student-only form-group">
-        {{ form.division.label_tag }}
-        {{ form.division }}
-      </div>
-      
-      <div class="col-md-4 student-only form-group">
-        {{ form.roll_no.label_tag }}
-        {{ form.roll_no }}
-      </div>
-      
-      <div class="col-md-4 student-only form-group">
-        {{ form.semester.label_tag }}
-        {{ form.semester }}
-      </div>
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--linen);
+        }
 
-      <!-- teacher fields -->
-      <div class="col-md-6 teacher-only form-group">
-        {{ form.department.label_tag }}
-        {{ form.department }}
-      </div>
-      
-      <div class="col-md-6 teacher-only form-group">
-        {{ form.subject.label_tag }}
-        {{ form.subject }}
-      </div>
+        .divider span {
+            background: white;
+            padding: 0 16px;
+            color: var(--mocha);
+            position: relative;
+            font-size: 14px;
+        }
+
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .social-btn {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--ivory);
+            color: var(--mocha);
+            border: 2px solid var(--linen);
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            color: var(--taupe);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--linen);
+        }
+
+        .auth-footer p {
+            color: var(--mocha);
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .auth-link {
+            color: var(--taupe);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .auth-link:hover {
+            color: var(--mocha);
+            text-decoration: underline;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .registration-card {
+                max-width: 100%;
+                border-radius: 20px;
+            }
+            
+            .card-body {
+                padding: 25px;
+            }
+            
+            .card-header {
+                padding: 25px;
+            }
+            
+            .logo-text {
+                font-size: 24px;
+            }
+            
+            .logo-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+        }
+
+        /* Animation for form elements */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+        .form-group:nth-child(6) { animation-delay: 0.6s; }
+        .form-group:nth-child(7) { animation-delay: 0.7s; }
+    </style>
+</head>
+<body>
+    <div class="registration-card">
+        <div class="card-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="logo-text">Project Review</div>
+            </div>
+            <h1>Create Student Account</h1>
+            <p>Begin your academic journey with us today</p>
+        </div>
+        
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i> Username
+                    </label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter your username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope"></i> Email Address
+                    </label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" id="password" class="form-control" placeholder="Create a password">
+                    <p class="password-hint">Use at least 8 characters with a mix of letters, numbers & symbols</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-password" class="form-label">
+                        <i class="fas fa-shield-alt"></i> Confirm Password
+                    </label>
+                    <input type="password" id="confirm-password" class="form-control" placeholder="Confirm your password">
+                </div>
+                
+                <div class="form-group">
+                    <label for="rollno" class="form-label">
+                        <i class="fas fa-id-card"></i> Roll Number
+                    </label>
+                    <input type="text" id="rollno" class="form-control" placeholder="Enter your roll number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="semester" class="form-label">
+                        <i class="fas fa-calendar-alt"></i> Semester
+                    </label>
+                    <select id="semester" class="form-control">
+                        <option value="">Select your semester</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="division" class="form-label">
+                        <i class="fas fa-users"></i> Division
+                    </label>
+                    <select id="division" class="form-control">
+                        <option value="">Select your division</option>
+                        <option value="A">Division A</option>
+                        <option value="B">Division B</option>
+                        <option value="C">Division C</option>
+                        <option value="D">Division D</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-signup">
+                    <i class="fas fa-user-plus"></i> Create Student Account
+                </button>
+            </form>
+            
+            <div class="divider">
+                <span>Or continue with</span>
+            </div>
+            
+            <div class="social-login">
+                <button class="social-btn">
+                    <i class="fab fa-google"></i>
+                </button>
+                <button class="social-btn">
+                    <i class="fab fa-microsoft"></i>
+                </button>
+                <button class="social-btn">
+                    <i class="fab fa-apple"></i>
+                </button>
+            </div>
+            
+            <div class="auth-footer">
+                <p>Already have an account?</p>
+                <a href="{% url 'login' %}" class="auth-link">
+                    <i class="fas fa-arrow-right-to-bracket"></i> Sign In Here
+                </a>
+            </div>
+        </div>
     </div>
 
-    <button type="submit" class="btn-signup">Sign Up</button>
-  </form>
-  <div class="login-link">Already have an account? <a href="{% url 'login' %}">Login</a></div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  const role = document.getElementById('id_role');
-  const studentEls = document.querySelectorAll('.student-only');
-  const teacherEls = document.querySelectorAll('.teacher-only');
-  
-  function toggleFields(){
-    const value = role.value;
-    studentEls.forEach(el => el.style.display = (value === 'student') ? 'block' : 'none');
-    teacherEls.forEach(el => el.style.display = (value === 'teacher') ? 'block' : 'none');
-  }
-  
-  role.addEventListener('change', toggleFields);
-  toggleFields(); // Initialize on page load
-});
-</script>
-{% endblock %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const formControls = document.querySelectorAll('.form-control');
+            
+            formControls.forEach(control => {
+                // Add focus effect
+                control.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                control.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+            
+            // Add button animation
+            const signupBtn = document.querySelector('.btn-signup');
+            
+            signupBtn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+            });
+            
+            signupBtn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

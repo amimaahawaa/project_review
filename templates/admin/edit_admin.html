@@ -1,0 +1,227 @@
+{% extends "base_admin.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .edit-admin-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2.5rem;
+        background: linear-gradient(135deg, #ffffff 0%, #f9f5f6 100%);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(126, 91, 135, 0.1);
+    }
+    
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--primary-light);
+    }
+    
+    .page-title {
+        color: var(--primary-dark);
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+    
+    .page-title i {
+        color: var(--accent);
+        background: rgba(126, 91, 135, 0.1);
+        padding: 12px;
+        border-radius: 12px;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--primary-dark);
+        font-size: 1rem;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e2e2e2;
+        border-radius: 10px;
+        background-color: #fafafa;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        background-color: #fff;
+        box-shadow: 0 0 0 3px rgba(126, 91, 135, 0.1);
+    }
+    
+    .errorlist {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        padding-left: 1rem;
+    }
+    
+    .errorlist li {
+        margin-bottom: 0.25rem;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-update {
+        background: linear-gradient(to right, var(--primary), var(--primary-light));
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(126, 91, 135, 0.3);
+        cursor: pointer;
+        font-size: 1rem;
+    }
+    
+    .btn-update:hover {
+        background: linear-gradient(to right, var(--primary-dark), var(--primary));
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(126, 91, 135, 0.4);
+    }
+    
+    .btn-cancel {
+        background: linear-gradient(to right, #6c757d, #5a6268);
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    }
+    
+    .btn-cancel:hover {
+        background: linear-gradient(to right, #5a6268, #495057);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
+        color: white;
+    }
+    
+    /* Animation for form */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .edit-admin-container {
+        animation: fadeIn 0.5s ease forwards;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .edit-admin-container {
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn-update, .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="edit-admin-container">
+    <div class="page-header">
+        <h2 class="page-title">
+            <i class="fas fa-user-edit"></i> Edit Admin
+        </h2>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        {% for field in form %}
+        <div class="form-group">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <ul class="errorlist">
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% if field.help_text %}
+                <small style="color: #6c757d; font-size: 0.85rem; display: block; margin-top: 0.5rem;">{{ field.help_text }}</small>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <div class="action-buttons">
+            <button type="submit" class="btn-update">
+                <i class="fas fa-save"></i> Update Admin
+            </button>
+            <a href="{% url 'manage_admins' %}" class="btn-cancel">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add classes to form inputs
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.classList.add('form-control');
+        });
+        
+        // Add hover effects to buttons
+        const buttons = document.querySelectorAll('.btn-update, .btn-cancel');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
+{% endblock %}
