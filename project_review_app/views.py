@@ -11,6 +11,7 @@ from .models import *
 from .forms import *
 
 
+
 # --------------------
 # Static pages
 # --------------------
@@ -81,8 +82,6 @@ def dashboard_view(request):
         "total_students": total_students,
         "total_admins": total_admins,
     })
-
-
 
 
 
@@ -161,7 +160,7 @@ def add_teacher(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Teacher added successfully!")
-            return redirect("admin_dashboard")
+            return redirect("dashboard")
     else:
         form = TeacherForm()
     return render(request, "admin/add_teacher.html", {"form": form})
@@ -500,3 +499,83 @@ def profile(request):
 
 def help_center(request):
     return render(request, "student/help_center.html")
+@login_required
+def student_create_group(request):
+    if request.method == "POST":
+        form = GroupForm(request.POST, user=request.user)
+        if form.is_valid():
+            group = form.save(commit=False)
+            group.teacher = None  # student-created group
+            group.save()
+
+            # Add creator as a member
+            GroupMember.objects.create(group=group, student=request.user)
+
+            messages.success(request, "Group created successfully!")
+            return redirect("assign_members", group_id=group.id)
+    else:
+        form = GroupForm(user=request.user)
+
+    return render(request, "student/create_group.html", {"form": form})
+
+
+@login_required
+def assign_members(request, group_id):
+    group = get_object_or_404(ProjectGroup, id=group_id)
+
+    semester = request.GET.get("semester")
+    division = request.GET.get("division")
+
+    # Filter students by semester/division
+    students_qs = CustomUser.objects.filter(role="student")
+    if semester:
+        students_qs = students_qs.filter(semester=semester)
+    if division:
+        students_qs = students_qs.filter(division=division)
+
+    if request.method == "POST":
+        form = AssignMembersForm(request.POST)
+        form.fields['students'].queryset = students_qs
+        if form.is_valid():
+            # Remove old members except creator
+            GroupMember.objects.filter(group=group).exclude(student=request.user).delete()
+
+            # Add new selected members
+            for student in form.cleaned_data['students']:
+                GroupMember.objects.get_or_create(group=group, student=student)
+
+            messages.success(request, "Members assigned successfully!")
+            return redirect("student_group_detail", group_id=group.id)
+    else:
+        # Preselect current members except creator
+        initial_members = group.members.exclude(id=request.user.id)
+        form = AssignMembersForm(initial={'students': initial_members})
+        form.fields['students'].queryset = students_qs
+
+    return render(request, "teacher/assign_members.html", {
+        "form": form,
+        "group": group,
+        "semester_choices": CustomUser.SEMESTER_CHOICES,
+        "division_choices": CustomUser.DIVISION_CHOICES,
+        "sel_semester": semester,
+        "sel_division": division,
+    })
+
+
+@login_required
+def student_group_detail(request, group_id):
+    group = get_object_or_404(ProjectGroup, id=group_id)
+    members = group.members.all()
+    return render(request, "student/group_detail.html", {"group": group, "members": members})
+
+
+def group_update(request, pk):
+    group = get_object_or_404(ProjectGroup, pk=pk)
+    if request.method == 'POST':
+        form = GroupForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            return redirect('group_detail', pk=group.id)
+    else:
+        form = GroupForm(instance=group)
+    return render(request, 'teacher/create_group.html', {'form': form, 'title': 'Edit Group'})

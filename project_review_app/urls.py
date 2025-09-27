@@ -64,5 +64,8 @@ urlpatterns = [
     path('my-submissions/', views.view_submissions, name='view_submissions'),
     path('profile/', views.profile, name='profile'),
     path('help-center/', views.help_center, name='help_center'),
+    path("student/group/create/", views.student_create_group, name="student_create_group"),
+    path("group/<int:group_id>/assign-members/", views.assign_members, name="assign_members"),
+    path("student/group/<int:group_id>/", views.student_group_detail, name="student_group_detail"),
 
 ]
