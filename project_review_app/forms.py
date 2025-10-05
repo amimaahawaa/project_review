@@ -10,7 +10,6 @@ User = get_user_model()
 # --------------------
 # Signup Form Students 
 # --------------------
-
 class StudentSignUpForm(UserCreationForm):
     class Meta:
         model = CustomUser
@@ -26,9 +25,7 @@ class StudentSignUpForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        # FORCE student role (POST me kuch bhi aaye, yahi set hoga)
         user.role = "student"
-        # teacher-only fields kabhi mat chhedo
         user.department = None
         user.subject = None
         if commit:
@@ -43,7 +40,7 @@ class StudentSignUpForm(UserCreationForm):
 
 
 # --------------------
-# Signup Form teachers 
+# Signup Form Teachers 
 # --------------------
 class TeacherForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
@@ -54,17 +51,16 @@ class TeacherForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.role = "teacher"   # force teacher role
-        # student fields blank kar do
+        user.role = "teacher"
         user.division = None
         user.roll_no = None
         user.semester = None
-        # password hash set karna zaroori hai
         user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
         return user
     
+
 class AdminStudentForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
 
@@ -83,7 +79,7 @@ class AdminStudentForm(forms.ModelForm):
 
 class AdminForm(forms.ModelForm):
     password = forms.CharField(
-        required=True,   # 👈 ab blank nahi chhod sakte
+        required=True,
         widget=forms.PasswordInput,
         help_text="Enter a strong password."
     )
@@ -95,18 +91,13 @@ class AdminForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         password = self.cleaned_data.get("password")
-
         if password:
-            user.set_password(password)  # ✅ always hashed password save karega
-
-        # Force admin role + staff permission
+            user.set_password(password)
         user.role = "admin"
         user.is_staff = True   
-
         if commit:
             user.save()
         return user
-
 
 
 # ---------- Teacher Edit Form (Admin ke liye edit/update) ----------
@@ -121,6 +112,7 @@ class StudentForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ("username", "email", "roll_no", "semester", "division")
+
 
 # --------------------
 # Auth Form (Login by Email)
@@ -154,6 +146,7 @@ class TopicForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
         }
 
+
 # --------------------
 # Group Creation Form
 # --------------------
@@ -172,9 +165,22 @@ class GroupForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super(GroupForm, self).__init__(*args, **kwargs)
+
         if user:
-         
-            self.fields['topic'].queryset = Topic.objects.filter(created_by=user)
+            if user.role == "teacher":
+                # teacher sees only their created topics
+                self.fields['topic'].queryset = Topic.objects.filter(created_by=user)
+            elif user.role == "student":
+                # 🔹 Option 1: student sees all topics
+                self.fields['topic'].queryset = Topic.objects.all()
+
+                # 🔹 Option 2 (better): filter by division/semester
+                # self.fields['topic'].queryset = Topic.objects.filter(
+                #     teacher__isnull=False,
+                #     # adjust if you store division/semester in teacher or topic
+                # )
+
+        self.fields["topic"].empty_label = "Select a Topic"
 
 
 # --------------------

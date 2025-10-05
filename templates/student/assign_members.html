@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --ivory: #FFFFF5;
+        --linen: #F5F0E6;
+        --peach: #F8D8B8;
+        --taupe: #A89B8C;
+        --mocha: #7A6B5E;
+        --umber: #5A4D42;
+        --slate: #6C7A89;
+        --charcoal: #2A2E35;
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    body {
+        background-color: var(--ivory);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .assign-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--peach);
+    }
+
+    .page-title {
+        color: var(--umber);
+        font-weight: 700;
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .group-name {
+        color: var(--mocha);
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    /* Filter Section */
+    .filter-form {
+        background: linear-gradient(135deg, var(--linen) 0%, #f9f6f1 100%);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        margin-bottom: 2rem;
+        border: 1px solid rgba(168, 155, 140, 0.1);
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        align-items: end;
+    }
+
+    .filter-label {
+        color: var(--mocha);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+
+    .filter-select {
+        background-color: var(--ivory);
+        border: 1px solid var(--taupe);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        color: var(--charcoal);
+        transition: var(--transition);
+        width: 100%;
+    }
+
+    .filter-select:focus {
+        border-color: var(--mocha);
+        box-shadow: 0 0 0 3px rgba(168, 155, 140, 0.2);
+        outline: none;
+    }
+
+    .filter-btn {
+        background: var(--taupe);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: var(--transition);
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .filter-btn:hover {
+        background: var(--mocha);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Main Form */
+    .main-form {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        border: 1px solid rgba(168, 155, 140, 0.1);
+    }
+
+    .form-section {
+        padding: 2rem;
+    }
+
+    .section-title {
+        color: var(--mocha);
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .student-list {
+        background: var(--ivory);
+        border: 1px solid rgba(168, 155, 140, 0.3);
+        border-radius: 8px;
+        padding: 1.5rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    /* Form Check Styling */
+    .form-check {
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid rgba(168, 155, 140, 0.1);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+    }
+
+    .form-check:hover {
+        background: var(--linen);
+        transform: translateX(5px);
+        border-color: var(--peach);
+    }
+
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--taupe);
+        border-radius: 4px;
+        margin-right: 1rem;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .form-check-input:checked {
+        background: var(--taupe);
+        border-color: var(--taupe);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(168, 155, 140, 0.25);
+    }
+
+    .form-check-label {
+        color: var(--charcoal);
+        font-weight: 500;
+        flex: 1;
+        cursor: pointer;
+    }
+
+    .student-details {
+        color: var(--mocha);
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--slate);
+    }
+
+    .empty-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--taupe);
+    }
+
+    /* Submit Button */
+    .submit-section {
+        padding: 1.5rem 2rem;
+        background: rgba(168, 155, 140, 0.05);
+        border-top: 1px solid rgba(168, 155, 140, 0.1);
+        text-align: center;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, var(--taupe) 0%, var(--mocha) 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: var(--transition);
+        cursor: pointer;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(90, 77, 66, 0.3);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-section {
+            padding: 1rem;
+        }
+        
+        .student-list {
+            padding: 1rem;
+        }
+        
+        .form-check {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .form-check-input {
+            margin-right: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="assign-container">
+    <div class="page-header">
+        <h1 class="page-title">Assign Members</h1>
+        <div class="group-name">to {{ group.name }}</div>
+    </div>
+
+    <!-- Filter Form -->
+    <form method="get" class="filter-form">
+        <div class="filter-grid">
+            <div>
+                <label class="filter-label">Semester</label>
+                <select name="semester" class="filter-select">
+                    <option value="">All Semesters</option>
+                    {% for val,label in semester_choices %}
+                        <option value="{{ val }}" {% if sel_semester|stringformat:"s" == val|stringformat:"s" %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="filter-label">Division</label>
+                <select name="division" class="filter-select">
+                    <option value="">All Divisions</option>
+                    {% for val,label in division_choices %}
+                        <option value="{{ val }}" {% if sel_division == val %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="filter-btn">
+                    <i class="bi bi-funnel"></i> Apply Filters
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Main Form (Your original Django form structure) -->
+    <form method="post" class="main-form">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            {{ form.non_field_errors }}
+            
+            {% for field in form %}
+                {% if field.name == 'students' %}
+                    <div class="section-title">
+                        <i class="bi bi-people"></i> Select Students (filtered)
+                    </div>
+                    
+                    <div class="student-list">
+                        {% for cb in field %}
+                            <div class="form-check">
+                                {{ cb.tag }}
+                                <label class="form-check-label">
+                                    {{ cb.choice_label }}
+                                </label>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                                <p>No students available with current filters.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="mb-3">
+                        <label class="filter-label">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if form.fields.students.queryset %}
+        <div class="submit-section">
+            <button type="submit" class="submit-btn">
+                <i class="bi bi-check-circle"></i> Assign Selected
+            </button>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+<script>
+    // Add some interactivity to checkboxes
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.form-check-input');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const formCheck = this.closest('.form-check');
+                if (this.checked) {
+                    formCheck.style.background = 'rgba(248, 216, 184, 0.2)';
+                    formCheck.style.borderColor = 'var(--peach)';
+                } else {
+                    formCheck.style.background = 'white';
+                    formCheck.style.borderColor = 'rgba(168, 155, 140, 0.1)';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
