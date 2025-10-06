@@ -328,6 +328,11 @@
                             <li>{{ m.student.username }}</li>
                         {% endfor %}
                     </ul>
+                    <div style="margin-top: 1rem;">
+                        <a class="btn btn-primary" href="{% url 'group_chat' g.group.id %}">
+                            <i class="bi bi-chat-dots"></i> Open Chat
+                        </a>
+                    </div>
                 </li>
             {% endfor %}
         </ul>

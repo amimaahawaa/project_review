@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Group Chat{% endblock %}
+
+{% block extra_css %}
+<style>
+  :root { --ivory:#FFFFF5; --linen:#F5F0E6; --peach:#F8D8B8; --taupe:#A89B8C; --mocha:#7A6B5E; --umber:#5A4D42; --slate:#6C7A89; --charcoal:#2A2E35; }
+  .chat-card{background:var(--linen);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.08);border-top:5px solid var(--peach);overflow:hidden}
+  .chat-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid rgba(168,155,140,.3)}
+  .chat-title{color:var(--umber);font-weight:700;margin:0}
+  .chat-body{height:60vh;overflow-y:auto;background:var(--ivory);padding:1rem}
+  .msg{max-width:70%;margin:.5rem 0;padding:.6rem .8rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .msg.me{margin-left:auto;background:linear-gradient(135deg,var(--taupe),var(--mocha));color:#fff}
+  .msg.other{margin-right:auto;background:#fff;border:1px solid var(--linen)}
+  .msg-meta{font-size:.75rem;opacity:.8;margin-top:.25rem}
+  .chat-input{display:flex;gap:.5rem;padding:1rem;border-top:1px solid rgba(168,155,140,.3);background:#fff}
+  .chat-input input{flex:1;border:1px solid var(--taupe);border-radius:8px;padding:.75rem 1rem;background:var(--ivory)}
+  .chat-input button{background:linear-gradient(135deg,var(--taupe),var(--mocha));border:none;color:#fff;border-radius:8px;padding:.75rem 1.25rem;font-weight:600}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="chat-card">
+    <div class="chat-header">
+      <h5 class="chat-title">Group Chat • {{ group.name }}</h5>
+      <span style="color:var(--slate)">Topic: {{ group.topic.title|default:"-" }}</span>
+    </div>
+    <div id="chatBody" class="chat-body"></div>
+    <div class="chat-input">
+      <input id="msgInput" type="text" placeholder="Type your message..." />
+      <button id="sendBtn"><i class="bi bi-send"></i> Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const roomId = {{ room.id }};
+  let lastId = 0;
+
+  async function fetchMessages() {
+    const res = await fetch(`{% url 'chat_messages' 0 %}`.replace('/0/', `/${roomId}/`) + `?since=${lastId}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.messages.length) {
+      const body = document.getElementById('chatBody');
+      data.messages.forEach(m => {
+        const el = document.createElement('div');
+        el.className = 'msg ' + (m.is_me ? 'me' : 'other');
+        el.innerHTML = `<div>${m.text.replace(/</g,'&lt;')}</div><div class="msg-meta">${m.sender} • ${m.created_at}</div>`;
+        body.appendChild(el);
+      });
+      lastId = data.last_id || lastId;
+      body.scrollTop = body.scrollHeight;
+    }
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('msgInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const res = await fetch(`{% url 'chat_send' 0 %}`.replace('/0/', `/${roomId}/`), {
+      method: 'POST',
+      headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+      body: new URLSearchParams({ text })
+    });
+    if (res.ok) {
+      input.value = '';
+      fetchMessages();
+    }
+  }
+
+  document.getElementById('sendBtn').addEventListener('click', sendMessage);
+  document.getElementById('msgInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+  setInterval(fetchMessages, 1500);
+  fetchMessages();
+</script>
+{% endblock %}
+
+
+

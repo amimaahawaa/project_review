@@ -65,4 +65,8 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('help-center/', views.help_center, name='help_center'),
 
+    # chat
+    path('chat/group/<int:group_id>/', views.group_chat, name='group_chat'),
+    path('chat/room/<int:room_id>/messages/', views.chat_messages, name='chat_messages'),
+    path('chat/room/<int:room_id>/send/', views.chat_send, name='chat_send'),
 ]

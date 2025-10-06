@@ -9,6 +9,7 @@ from django.views.generic import DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import *
 from .forms import *
+from django.http import JsonResponse, HttpResponseBadRequest
 
 
 # --------------------
@@ -51,16 +52,13 @@ def login_view(request):
         if form.is_valid():
             email = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            try:
-                user_obj = CustomUser.objects.get(email=email)
-                user = authenticate(request, username=user_obj.username, password=password)
-                if user:
-                    login(request, user)
-                    return redirect('home')
-                else:
-                    form.add_error('password', 'Incorrect password')
-            except CustomUser.DoesNotExist:
-                form.add_error('username', 'No account found with this email')
+            user = authenticate(request, username=email, password=password)
+            if user:
+                login(request, user)
+                print(f"User {user.username} logged in with role: {user.role}")
+                return redirect('home')
+            else:
+                form.add_error('password', 'Incorrect password')
     else:
         form = EmailAuthenticationForm()
     return render(request, 'login.html', {'form': form})
@@ -222,9 +220,12 @@ def logout_view(request):
 @login_required
 def home(request):
     """Redirect user based on role"""
-    if request.user.role == 'teacher':
+    if request.user.role == 'admin':
+        return redirect('dashboard')
+    elif request.user.role == 'teacher':
         return redirect('teacher_dashboard')
-    return redirect('student_dashboard')
+    else:
+        return redirect('student_dashboard')
 
 
 # --------------------
@@ -500,3 +501,83 @@ def profile(request):
 
 def help_center(request):
     return render(request, "student/help_center.html")
+
+
+# --------------------
+# Group Chat Views
+# --------------------
+@login_required
+def group_chat(request, group_id):
+    group = get_object_or_404(ProjectGroup, id=group_id)
+
+    # Access control: teacher of the group or student member
+    is_teacher_of_group = (request.user.role == 'teacher' and group.teacher_id == request.user.id)
+    is_student_member = GroupMember.objects.filter(group=group, student=request.user).exists()
+    if not (is_teacher_of_group or is_student_member or request.user.role == 'admin'):
+        raise PermissionDenied("You are not allowed in this chat")
+
+    # Ensure room exists
+    room, _ = ChatRoom.objects.get_or_create(group=group)
+
+    return render(request, 'chat/group_chat.html', {
+        'group': group,
+        'room': room,
+    })
+
+
+@login_required
+def chat_messages(request, room_id):
+    room = get_object_or_404(ChatRoom, id=room_id)
+
+    # Access control similar to group_chat
+    group = room.group
+    is_teacher_of_group = (request.user.role == 'teacher' and group.teacher_id == request.user.id)
+    is_student_member = GroupMember.objects.filter(group=group, student=request.user).exists()
+    if not (is_teacher_of_group or is_student_member or request.user.role == 'admin'):
+        return HttpResponseBadRequest("Not allowed")
+
+    since_id = request.GET.get('since')
+    qs = room.messages.select_related('sender')
+    if since_id:
+        qs = qs.filter(id__gt=since_id)
+
+    data = [
+        {
+            'id': m.id,
+            'sender': m.sender.username,
+            'sender_role': m.sender.role,
+            'text': m.text,
+            'created_at': m.created_at.strftime('%Y-%m-%d %H:%M'),
+            'is_me': m.sender_id == request.user.id,
+        }
+        for m in qs.order_by('id')
+    ]
+    last_id = data[-1]['id'] if data else (int(since_id) if since_id else 0)
+    return JsonResponse({'messages': data, 'last_id': last_id})
+
+
+@login_required
+def chat_send(request, room_id):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Invalid method')
+
+    room = get_object_or_404(ChatRoom, id=room_id)
+    group = room.group
+    is_teacher_of_group = (request.user.role == 'teacher' and group.teacher_id == request.user.id)
+    is_student_member = GroupMember.objects.filter(group=group, student=request.user).exists()
+    if not (is_teacher_of_group or is_student_member or request.user.role == 'admin'):
+        return HttpResponseBadRequest("Not allowed")
+
+    text = (request.POST.get('text') or '').strip()
+    if not text:
+        return HttpResponseBadRequest('Empty')
+
+    msg = ChatMessage.objects.create(room=room, sender=request.user, text=text)
+    return JsonResponse({
+        'id': msg.id,
+        'sender': msg.sender.username,
+        'sender_role': msg.sender.role,
+        'text': msg.text,
+        'created_at': msg.created_at.strftime('%Y-%m-%d %H:%M'),
+        'is_me': True,
+    })

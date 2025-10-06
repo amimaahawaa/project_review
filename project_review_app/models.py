@@ -182,3 +182,26 @@ class Query(models.Model):
     def __str__(self):
         return f"Query from {self.student.username} in {self.group.name}"
 
+
+# --------------------
+# Group Chat Models
+# --------------------
+class ChatRoom(models.Model):
+    group = models.OneToOneField(ProjectGroup, on_delete=models.CASCADE, related_name='chat_room')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"ChatRoom for {self.group.name}"
+
+
+class ChatMessage(models.Model):
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.sender.username}: {self.text[:30]}"
