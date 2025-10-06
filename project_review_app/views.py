@@ -253,10 +253,10 @@ def teacher_dashboard(request):
     context = {
         "students_count": CustomUser.objects.filter(role="student").count(),
         "topics_count": Topic.objects.filter(created_by=teacher).count(),
-        "groups_count": ProjectGroup.objects.filter(topic__created_by=teacher).count(),
+        "groups_count": ProjectGroup.objects.filter(teacher=teacher).count(),
         "pending_reviews_count": Submission.objects.filter(
             status="pending",
-            group__topic__created_by=teacher
+            group__teacher=teacher
         ).count(),
     }
     return render(request, "teacher_dashboard.html", context)
@@ -284,8 +284,20 @@ def view_students(request):
 
 @teacher_required
 def submissions_list(request):
-    subs = Submission.objects.all().order_by('-submitted_at')
-    return render(request, 'teacher/submissions_list.html', {'subs': subs})
+    # Show only submissions for groups owned by this teacher
+    status = request.GET.get('status') or ''
+    submissions_qs = Submission.objects.select_related('group', 'uploaded_by', 'group__teacher') \
+        .filter(group__teacher=request.user) \
+        .order_by('-submitted_at')
+
+    if status:
+        submissions_qs = submissions_qs.filter(status=status)
+
+    return render(request, 'teacher/submissions_list.html', {
+        'submissions': submissions_qs,
+        'status_choices': Submission.STATUS_CHOICES,
+        'current_status': status,
+    })
 
 
 @teacher_required
